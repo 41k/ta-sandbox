@@ -11,22 +11,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class CsvBarProvider implements BarProvider
 {
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
     @Override
     public List<Bar> getMinuteBars()
     {
-        return getMinuteBars("data/appleinc_bars_from_20130101_usd.csv");
+        return getMinuteBars("data/ohlcvt-1m-1.csv");
     }
 
     @Override
@@ -34,17 +31,21 @@ public class CsvBarProvider implements BarProvider
     {
         List<Bar> bars = new ArrayList<>();
         InputStream stream = CsvBarProvider.class.getClassLoader().getResourceAsStream(filename);
-        try (CSVReader csvReader = new CSVReader(new InputStreamReader(stream, StandardCharsets.UTF_8), ',', '"', 1))
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(stream, StandardCharsets.UTF_8), ',', '"', 0))
         {
             String[] line;
             while ((line = csvReader.readNext()) != null)
             {
-                Bar bar = buildBar(line, Duration.ofDays(1));
+                Bar bar = buildBar(line, Duration.ofMinutes(1));
                 bars.add(bar);
             }
-        } catch (IOException ioe) {
+        }
+        catch (IOException ioe)
+        {
             log.error("Unable to load bars from CSV", ioe);
-        } catch (NumberFormatException nfe) {
+        }
+        catch (NumberFormatException nfe)
+        {
             log.error("Error while parsing value", nfe);
         }
         return bars;
@@ -52,12 +53,13 @@ public class CsvBarProvider implements BarProvider
 
     private Bar buildBar(String[] line, Duration duration)
     {
-        ZonedDateTime date = LocalDate.parse(line[0], DATE_FORMAT).atStartOfDay(ZoneId.systemDefault());
-        String open = line[1];
-        String high = line[2];
-        String low = line[3];
-        String close = line[4];
-        String volume = line[5];
-        return new BaseBar(duration, date, open, high, low, close, volume);
+        String open = line[0];
+        String high = line[1];
+        String low = line[2];
+        String close = line[3];
+        String volume = line[4];
+        Instant barTime = Instant.ofEpochMilli(Long.parseLong(line[5]));
+        ZonedDateTime zonedBarTime = ZonedDateTime.ofInstant(barTime, ZoneId.systemDefault());
+        return new BaseBar(duration, zonedBarTime, open, high, low, close, volume);
     }
 }

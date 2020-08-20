@@ -24,9 +24,14 @@ function createOptions(segment, index) {
     var changeableOptions = createChangeableOptions();
     segment.forEach(tick => processTick(tick, changeableOptions));
     options.series = [
-        changeableOptions.resistanceIndicator,
+        //changeableOptions.resistanceIndicator,
         changeableOptions.closePriceIndicator,
-        changeableOptions.supportIndicator
+        //changeableOptions.supportIndicator,
+        changeableOptions.shortSmaIndicator,
+        changeableOptions.mediumSmaIndicator,
+        changeableOptions.longSmaIndicator,
+        //changeableOptions.longEmaIndicator,
+        //changeableOptions.shortEmaIndicator
     ];
     options.labels = changeableOptions.xAxisTimeLabels;
     return options;
@@ -45,7 +50,8 @@ function createCommonOptions(segment, index) {
             enabled: false
         },
         stroke: {
-            curve: 'straight'
+            curve: 'straight',
+            width: 2
         },
         grid: {
             padding: {
@@ -68,7 +74,7 @@ function createCommonOptions(segment, index) {
         yaxis: {
             opposite: true
         },
-        colors: ['#ED5565', '#3097DE', '#1AB394']
+        colors: ['#000000', '#ED5565', '#1AB394', '#3097DE']
     };
 }
 
@@ -86,6 +92,26 @@ function createChangeableOptions(segment, index) {
             name: "Resistance",
             data: []
         },
+        longSmaIndicator: {
+            name: "Long SMA",
+            data: []
+        },
+        mediumSmaIndicator: {
+            name: "Medium SMA",
+            data: []
+        },
+        shortSmaIndicator: {
+            name: "Short SMA",
+            data: []
+        },
+        longEmaIndicator: {
+            name: "Long EMA",
+            data: []
+        },
+        shortEmaIndicator: {
+            name: "Short EMA",
+            data: []
+        },
         xAxisTimeLabels: []
     }
 }
@@ -95,6 +121,11 @@ function processTick(tick, options) {
     options.closePriceIndicator.data.push(indicators.price);
     options.supportIndicator.data.push(indicators.support);
     options.resistanceIndicator.data.push(indicators.resistance);
+    options.shortSmaIndicator.data.push(indicators.shortSma);
+    options.mediumSmaIndicator.data.push(indicators.mediumSma);
+    options.longSmaIndicator.data.push(indicators.longSma);
+    options.longEmaIndicator.data.push(indicators.longEma);
+    options.shortEmaIndicator.data.push(indicators.shortEma);
     options.xAxisTimeLabels.push(tick.timestamp);
 }
 

@@ -1,4 +1,4 @@
-package root.application;
+package root.application.model;
 
 import lombok.Builder;
 import lombok.Data;

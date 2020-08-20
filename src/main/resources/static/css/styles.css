@@ -18,6 +18,24 @@ body {
     box-shadow: 0 22px 35px -16px rgba(0,0,0, 0.1);
 }
 
+#report {
+    margin-top: 35px;
+    padding: 0 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 22px 35px -16px rgba(0,0,0, 0.1);
+}
+
+#report p {
+    font-size: 20px;
+    font-family: Consolas, Arial;
+    line-height: 1;
+}
+
+#report p span {
+    font-weight: bold;
+}
+
 select.flat-select {
     -moz-appearance: none;
     -webkit-appearance: none;

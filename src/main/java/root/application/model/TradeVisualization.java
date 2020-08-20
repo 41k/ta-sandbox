@@ -1,4 +1,4 @@
-package root.application;
+package root.application.model;
 
 import lombok.Builder;
 import lombok.Value;
@@ -10,5 +10,7 @@ import java.util.List;
 public class TradeVisualization
 {
     List<Tick> ticks;
+    Integer entryIndex;
+    Integer exitIndex;
     Double profit;
 }

@@ -4,19 +4,21 @@ import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.num.Num;
 
+import java.util.Set;
+
 import static java.lang.Boolean.FALSE;
 
-/**
- * Bullish bar comes after sequence of N Bearish bars
- * and has size which is greater than total size of the sequence.
- */
-public class ReversalStrongBullishIndicator extends AbstractBarIndicator
+public class StrongBarIndicator extends AbstractBarIndicator
 {
+    private final BarType barType;
+    private final Set<BarType> typesOfPreviousBars;
     private final int nPreviousBars;
 
-    public ReversalStrongBullishIndicator(BarSeries series, int nPreviousBarsToOvercome)
+    public StrongBarIndicator(BarType barType, Set<BarType> typesOfPreviousBars, int nPreviousBarsToOvercome, BarSeries series)
     {
         super(series);
+        this.barType = barType;
+        this.typesOfPreviousBars = typesOfPreviousBars;
         this.nPreviousBars = nPreviousBarsToOvercome;
     }
 
@@ -27,17 +29,13 @@ public class ReversalStrongBullishIndicator extends AbstractBarIndicator
         {
             return FALSE;
         }
-        return isReversalStrongBullishBarAt(index);
-    }
-
-    private boolean isReversalStrongBullishBarAt(int index)
-    {
         Bar currentBar = getBar(index);
-        boolean previousBarsAreBearish = getNPreviousBars(index, nPreviousBars).allMatch(Bar::isBearish);
+        boolean currentBarHasAllowedType = barType.conforms(currentBar);
+        boolean previousBarsHaveAllowedTypes = doesPreviousBarsHaveAllowedTypes(typesOfPreviousBars, index, nPreviousBars);
         Num currentBarSize = calculateBarSize(currentBar);
         Num previousBarsTotalSize = calculateTotalSizeOfNPreviousBars(index, nPreviousBars);
-        return currentBar.isBullish() &&
-                previousBarsAreBearish &&
+        return currentBarHasAllowedType &&
+                previousBarsHaveAllowedTypes &&
                 currentBarSize.isGreaterThan(previousBarsTotalSize);
     }
 }

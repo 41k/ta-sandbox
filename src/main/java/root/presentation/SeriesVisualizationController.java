@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import root.application.Tick;
-import root.application.SeriesVisualizationService;
+import root.application.model.Tick;
+import root.application.service.SeriesVisualizationService;
 
 import java.util.List;
 

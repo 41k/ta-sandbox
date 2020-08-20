@@ -5,8 +5,12 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.CrossIndicator;
 import root.domain.indicator.bar.AbstractBarIndicator;
-import root.domain.indicator.bar.SequentialStrongBullishIndicator;
+import root.domain.indicator.bar.StrongBarIndicator;
 import root.domain.indicator.sri.ResistanceIndicator;
+
+import java.util.Set;
+
+import static root.domain.indicator.bar.BarType.BULLISH;
 
 /**
  * Bullish bar after Resistance Level breakthrough by Sequential Strong Bullish bar.
@@ -14,13 +18,13 @@ import root.domain.indicator.sri.ResistanceIndicator;
  */
 public class ResistanceBreakthroughIndicator extends AbstractBarIndicator
 {
-    private final SequentialStrongBullishIndicator sequentialStrongBullishIndicator;
+    private final StrongBarIndicator sequentialStrongBullishIndicator;
     private final CrossIndicator crossIndicator;
 
     public ResistanceBreakthroughIndicator(BarSeries series, ResistanceIndicator resistanceIndicator)
     {
         super(series);
-        this.sequentialStrongBullishIndicator = new SequentialStrongBullishIndicator(series, 2);
+        this.sequentialStrongBullishIndicator = new StrongBarIndicator(BULLISH, Set.of(BULLISH), 2, series);
         this.crossIndicator = new CrossIndicator(resistanceIndicator, new ClosePriceIndicator(series));
     }
 
