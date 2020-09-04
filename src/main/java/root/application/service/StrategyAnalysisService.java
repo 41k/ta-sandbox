@@ -9,7 +9,7 @@ import org.ta4j.core.num.PrecisionNum;
 import root.application.BarProvider;
 import root.application.TradeVisualizationBuilder;
 import root.application.model.StrategyAnalysisReport;
-import root.domain.strategy.*;
+import root.domain.strategy.sma.*;
 
 import java.util.List;
 
@@ -23,27 +23,23 @@ public class StrategyAnalysisService
     {
         var bars = barProvider.getMinuteBars();
         var series = new BaseBarSeries(bars);
-        //var strategy = BullishReboundStrategy.buildStrategy(series);
-        //var strategy = ResistanceBreakthroughStrategy.buildStrategy(series);
-        //var strategy = ADXStrategy2.buildStrategy(series);
-        //var strategy = TWSStrategy.buildStrategy(series);
-        var strategyBuilder = new Sma3StrategyBuilder(series, 7, 25, 100);
-        var strategy = strategyBuilder.build();
+        var strategyFactory = new SmaStrategy1Factory("SMA3", series, 7, 25, 100);
+        var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);
         var trades = tradingRecord.getTrades();
 
-        var tradesVisualisation = tradeVisualizationBuilder.build(trades, series, strategyBuilder);
+        var tradesVisualisation = tradeVisualizationBuilder.build(trades, series, strategyFactory);
         var totalProfit = calculateTotalProfit(trades);
         var nProfitableTrades = calculateNumberOfProfitableTrades(trades);
         var nUnprofitableTrades = calculateNumberOfUnprofitableTrades(trades);
-        var riskRewardRation = nUnprofitableTrades / (double) nProfitableTrades;
+        var riskRewardRatio = nUnprofitableTrades / (double) nProfitableTrades;
         return StrategyAnalysisReport.builder()
                 .trades(tradesVisualisation)
                 .totalProfit(totalProfit)
                 .nProfitableTrades(nProfitableTrades)
                 .nUnprofitableTrades(nUnprofitableTrades)
-                .riskRewardRation(riskRewardRation)
+                .riskRewardRatio(riskRewardRatio)
                 .build();
     }
 

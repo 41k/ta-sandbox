@@ -26,37 +26,64 @@ function drawTrades(report) {
 }
 
 function drawTrade(trade, index) {
-    var options = createOptions(trade);
-    var chartSelector = createChartWrapper(index);
-    new ApexCharts(document.querySelector(chartSelector), options).render();
+    var tradeWrapper = createTradeWrapper(trade, index);
+    drawMainChart(trade, tradeWrapper, index);
+    drawAdditionalCharts(trade, tradeWrapper, index);
 }
 
-function createOptions(trade) {
-    var options = createCommonOptions(trade);
+function createTradeWrapper(trade, index) {
+    var tradeWrapperId = 'trade-' + index;
+    var tradeWrapperClass = 'trade-wrapper';
+    var tradeWrapper = document.createElement('div');
+    tradeWrapper.setAttribute('id', tradeWrapperId);
+    tradeWrapper.setAttribute('class', tradeWrapperClass);
+    addTradeLabel(tradeWrapper, trade);
+    document.getElementById('trades').appendChild(tradeWrapper);
+    return tradeWrapper;
+}
+
+function addTradeLabel(tradeWrapper, trade) {
+    var tradeLabel = document.createElement('p');
+    var profit = trade.profit;
+    var isProfitableTrade = profit > 0;
+    var labelClass = isProfitableTrade ? 'up' : 'down';
+    tradeLabel.setAttribute('class', labelClass);
+    var profitText = (isProfitableTrade ? 'UP' : 'DOWN') + '[' + profit + ']';
+    var fromToIndexesText = '[' + trade.entryIndex + ':' + trade.exitIndex + ']';
+    var strategyId = trade.strategyId;
+    var delimiter = ' --- ';
+    var labelText = profitText + delimiter + fromToIndexesText + delimiter + strategyId;
+    tradeLabel.textContent = labelText;
+    tradeWrapper.appendChild(tradeLabel);
+}
+
+function drawMainChart(trade, tradeWrapper, index) {
+    var options = createMainChartOptions(trade);
+    var mainChartWrapperId = 'main-' + index;
+    var mainChartWrapper = createChartWrapper(mainChartWrapperId);
+    tradeWrapper.appendChild(mainChartWrapper);
+    new ApexCharts(mainChartWrapper, options).render();
+}
+
+function createMainChartOptions(trade) {
+    var options = createCommonOptionsForMainChart(trade);
     addLineIndicators(options, trade);
     addBarSeries(options, trade);
     addSignals(options, trade);
     return options;
 }
 
-function createCommonOptions(trade) {
-    var profit = trade.profit;
-    var profitText = (profit < 0 ? 'DOWN' : 'UP') + '[' + profit + ']';
-    var entryIndexText = trade.entryIndex ? 'EntryIndex[' + trade.entryIndex + ']' : '';
-    var exitIndexText = trade.exitIndex ? 'ExitIndex[' + trade.exitIndex + ']' : '';
-    var delimiter = ' --- ';
-    var titleText = profitText + delimiter + entryIndexText + delimiter + exitIndexText;
+function createCommonOptionsForMainChart() {
     return {
         series: [],
         annotations: {
             xaxis: []
         },
         chart: {
-            height: 550,
+            height: 350,
             type: 'line'
         },
         title: {
-            text: titleText,
             align: 'left'
         },
         stroke: {
@@ -85,6 +112,12 @@ function createCommonOptions(trade) {
             }
         }
     };
+}
+
+function createChartWrapper(chartWrapperId) {
+    var chartWrapper = document.createElement("div");
+    chartWrapper.setAttribute("id", chartWrapperId);
+    return chartWrapper;
 }
 
 function addBarSeries(options, trade) {
@@ -162,12 +195,6 @@ function createSignal(tick) {
     }
 }
 
-function createChartWrapper(index) {
-    var chartDivId = "chart-" + index;
-    var chartDivClass = "chart-box";
-    var chartDiv = document.createElement("div");
-    chartDiv.setAttribute("id", chartDivId);
-    chartDiv.setAttribute("class", chartDivClass);
-    document.getElementById("trades").appendChild(chartDiv);
-    return "#" + chartDivId;
+function drawAdditionalCharts(trade, tradeWrapper, index) {
+
 }

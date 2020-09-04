@@ -5,12 +5,12 @@ import org.ta4j.core.indicators.CachedIndicator;
 import org.ta4j.core.indicators.SMAIndicator;
 import org.ta4j.core.num.Num;
 
-public class DownTrendIndicator extends CachedIndicator<Boolean>
+public class UpTrendIndicator extends CachedIndicator<Boolean>
 {
     private final Indicator<Num> indicator;
     private final SMAIndicator smaIndicator;
 
-    public DownTrendIndicator(Indicator<Num> indicator, int n)
+    public UpTrendIndicator(Indicator<Num> indicator, int n)
     {
         super(indicator);
         this.indicator = indicator;
@@ -22,6 +22,6 @@ public class DownTrendIndicator extends CachedIndicator<Boolean>
     {
         Num currentValue = indicator.getValue(index);
         Num lastNAverageValue = smaIndicator.getValue(index);
-        return currentValue.isLessThan(lastNAverageValue);
+        return currentValue.isGreaterThan(lastNAverageValue);
     }
 }

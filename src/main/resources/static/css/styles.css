@@ -9,31 +9,54 @@ body {
     background: #f9f9f9;
 }
 
-#chart, .chart-box {
-    margin: 35px auto;
-    padding-top: 20px;
-    padding-left: 10px;
-    background: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 22px 35px -16px rgba(0,0,0, 0.1);
-}
-
 #report {
-    margin-top: 35px;
-    padding: 0 20px;
+    width: 1040px;
+    margin: 35px auto 0 auto;
+    padding: 10px 30px;
     background: #fff;
     border: 1px solid #ddd;
     box-shadow: 0 22px 35px -16px rgba(0,0,0, 0.1);
 }
 
 #report p {
-    font-size: 20px;
+    font-size: 17px;
     font-family: Consolas, Arial;
     line-height: 1;
 }
 
 #report p span {
     font-weight: bold;
+}
+
+#trades {
+    width: 1100px;
+    margin: 0 auto;
+}
+
+#chart, .chart-box, .trade-wrapper {
+    margin: 35px auto;
+    padding-top: 10px;
+    padding-left: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 22px 35px -16px rgba(0,0,0, 0.1);
+}
+
+.trade-wrapper p {
+    display: block;
+    padding: 20px 20px 0px 20px;
+    margin: 0;
+    font-size: 17px;
+    font-weight: bold;
+    font-family: Consolas, Arial;
+}
+
+.trade-wrapper p.up {
+    color: #1ab394;
+}
+
+.trade-wrapper p.down {
+    color: #ed5565;
 }
 
 select.flat-select {

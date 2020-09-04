@@ -3,12 +3,13 @@ package root.application;
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
-import org.ta4j.core.Indicator;
 import org.ta4j.core.Trade;
 import org.ta4j.core.num.Num;
 import root.application.model.Tick;
 import root.application.model.TradeVisualization;
-import root.domain.strategy.StrategyBuilder;
+import root.domain.indicator.Indicator;
+import root.domain.indicator.SMAIndicator;
+import root.domain.strategy.StrategyFactory;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -18,33 +19,39 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class TradeVisualizationBuilder
 {
+    private static final HashSet<Class<? extends Indicator<Num>>> MAIN_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
+            SMAIndicator.class
+    ));
+    private static final HashSet<Class<? extends Indicator<Num>>> ADDITIONAL_CHART_NUM_INDICATOR_TYPES = new HashSet<>();
+
     private final int nTicksBeforeTrade;
     private final int nTicksAfterTrade;
 
-    public List<TradeVisualization> build(List<Trade> trades, BarSeries series, StrategyBuilder strategyBuilder)
+    public List<TradeVisualization> build(List<Trade> trades, BarSeries series, StrategyFactory strategyFactory)
     {
         return trades.stream()
-                .map(trade -> buildTradeVisualization(trade, series, strategyBuilder))
+                .map(trade -> buildTradeVisualization(trade, series, strategyFactory))
                 .collect(toList());
     }
 
-    private TradeVisualization buildTradeVisualization(Trade trade, BarSeries series, StrategyBuilder strategyBuilder)
+    private TradeVisualization buildTradeVisualization(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {
-        var ticksBeforeTrade = getTicksBeforeTrade(trade, series, strategyBuilder);
-        var ticksDuringTrade = getTicksDuringTrade(trade, series, strategyBuilder);
-        var ticksAfterTrade = getTicksAfterTrade(trade, series, strategyBuilder);
+        var ticksBeforeTrade = getTicksBeforeTrade(trade, series, strategyFactory);
+        var ticksDuringTrade = getTicksDuringTrade(trade, series, strategyFactory);
+        var ticksAfterTrade = getTicksAfterTrade(trade, series, strategyFactory);
         var ticks = Stream.of(ticksBeforeTrade, ticksDuringTrade, ticksAfterTrade)
                 .flatMap(Collection::stream)
                 .collect(toList());
         return TradeVisualization.builder()
                 .ticks(ticks)
+                .strategyId(strategyFactory.getStrategyId())
                 .entryIndex(trade.getEntry().getIndex())
                 .exitIndex(trade.getExit().getIndex())
                 .profit(trade.getProfit().doubleValue())
                 .build();
     }
 
-    private List<Tick> getTicksBeforeTrade(Trade trade, BarSeries series, StrategyBuilder strategyBuilder)
+    private List<Tick> getTicksBeforeTrade(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {
         var entryOrderIndex = trade.getEntry().getIndex();
         var seriesBeginIndex = series.getBeginIndex();
@@ -57,13 +64,13 @@ public class TradeVisualizationBuilder
         var startIndex = Math.max(0, entryOrderIndex - nTicksBeforeTrade - 1);
         for (int i = startIndex; i < entryOrderIndex; i++)
         {
-            var tick = buildTick(i, bars, strategyBuilder);
+            var tick = buildTick(i, bars, strategyFactory);
             ticks.add(tick);
         }
         return ticks;
     }
 
-    private List<Tick> getTicksAfterTrade(Trade trade, BarSeries series, StrategyBuilder strategyBuilder)
+    private List<Tick> getTicksAfterTrade(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {
         var exitOrderIndex = trade.getExit().getIndex();
         var seriesEndIndex = series.getEndIndex();
@@ -77,13 +84,13 @@ public class TradeVisualizationBuilder
         var endIndex = Math.min(exitOrderIndex + nTicksAfterTrade + 1, seriesEndIndex);
         for (int i = startIndex; i <= endIndex; i++)
         {
-            var tick = buildTick(i, bars, strategyBuilder);
+            var tick = buildTick(i, bars, strategyFactory);
             ticks.add(tick);
         }
         return ticks;
     }
 
-    private List<Tick> getTicksDuringTrade(Trade trade, BarSeries series, StrategyBuilder strategyBuilder)
+    private List<Tick> getTicksDuringTrade(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {
         var ticks = new ArrayList<Tick>();
         var entryOrder = trade.getEntry();
@@ -93,7 +100,7 @@ public class TradeVisualizationBuilder
         var bars = series.getBarData();
         for (int i = entryOrderIndex; i <= exitOrderIndex; i++)
         {
-            var tick = buildTick(i, bars, strategyBuilder);
+            var tick = buildTick(i, bars, strategyFactory);
             if (i == entryOrderIndex)
             {
                 tick.setSignal(entryOrder.getType());
@@ -107,10 +114,11 @@ public class TradeVisualizationBuilder
         return ticks;
     }
 
-    private Tick buildTick(int index, List<Bar> bars, StrategyBuilder strategyBuilder)
+    private Tick buildTick(int index, List<Bar> bars, StrategyFactory strategyFactory)
     {
         var bar = bars.get(index);
-        var indicators = getIndicators(index, strategyBuilder);
+        var mainChartNumIndicators = getMainChartNumIndicators(index, strategyFactory);
+        var additionalChartNumIndicators = getAdditionalChartNumIndicators(index, strategyFactory);
         return Tick.builder()
                 .open(bar.getOpenPrice().doubleValue())
                 .high(bar.getHighPrice().doubleValue())
@@ -118,21 +126,34 @@ public class TradeVisualizationBuilder
                 .close(bar.getClosePrice().doubleValue())
                 .volume(bar.getVolume().doubleValue())
                 .timestamp(bar.getEndTime().toInstant().toEpochMilli())
-                .indicators(indicators)
+                .mainChartNumIndicators(mainChartNumIndicators)
+                .additionalChartNumIndicators(additionalChartNumIndicators)
                 .build();
     }
 
-    private Map<String, Double> getIndicators(int index, StrategyBuilder strategyBuilder)
+    private Map<String, Double> getMainChartNumIndicators(int index, StrategyFactory strategyFactory)
+    {
+        return getNumberIndicators(index, strategyFactory, MAIN_CHART_NUM_INDICATOR_TYPES);
+    }
+
+    private Map<String, Double> getAdditionalChartNumIndicators(int index, StrategyFactory strategyFactory)
+    {
+        return getNumberIndicators(index, strategyFactory, ADDITIONAL_CHART_NUM_INDICATOR_TYPES);
+    }
+
+    private Map<String, Double> getNumberIndicators(int index,
+                                              StrategyFactory strategyFactory,
+                                              HashSet<Class<? extends Indicator<Num>>> indicatorTypes)
     {
         var indicatorNameToValueMap = new LinkedHashMap<String, Double>();
-        var nameToIndicatorMap = strategyBuilder.getNumIndicators().orElseGet(Map::of);
-        for (Map.Entry<String, Indicator<Num>> entry : nameToIndicatorMap.entrySet())
-        {
-            var indicatorName = entry.getKey();
-            var indicator = entry.getValue();
-            var indicatorValue = getIndicatorValue(indicator, index);
-            indicatorNameToValueMap.put(indicatorName, indicatorValue);
-        }
+        strategyFactory.getNumIndicators()
+                .stream()
+                .filter(indicator -> indicatorTypes.contains(indicator.getClass()))
+                .forEach(indicator -> {
+                    var indicatorName = indicator.getName();
+                    var indicatorValue = getIndicatorValue(indicator, index);
+                    indicatorNameToValueMap.put(indicatorName, indicatorValue);
+                });
         return indicatorNameToValueMap;
     }
 

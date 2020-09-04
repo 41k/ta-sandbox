@@ -10,6 +10,7 @@ import java.util.List;
 public class TradeVisualization
 {
     List<Tick> ticks;
+    String strategyId;
     Integer entryIndex;
     Integer exitIndex;
     Double profit;

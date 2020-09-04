@@ -13,5 +13,5 @@ public class StrategyAnalysisReport
     Double totalProfit;
     Long nProfitableTrades;
     Long nUnprofitableTrades;
-    Double riskRewardRation;
+    Double riskRewardRatio;
 }
