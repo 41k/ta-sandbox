@@ -24,6 +24,8 @@ public class Tick
     @NonNull
     Long timestamp;
     Order.OrderType signal;
-    Map<String, Double> mainChartNumIndicators;
-    Map<String, Double> additionalChartNumIndicators;
+    @Builder.Default
+    Map<String, Double> mainChartNumIndicators = Map.of();
+    @Builder.Default
+    Map<String, Double> additionalChartNumIndicators = Map.of();
 }

@@ -74,7 +74,7 @@ function createCommonOptions(segment, index) {
 
 function addLineIndicators(segment, options) {
     var indicatorNameToSeriesMap = {};
-    for (const indicator of Object.entries(segment[0].priceChartNumIndicators)) {
+    for (const indicator of Object.entries(segment[0].mainChartNumIndicators)) {
         var indicatorName = indicator[0];
         var series = {
             name: indicatorName,
@@ -83,7 +83,7 @@ function addLineIndicators(segment, options) {
         indicatorNameToSeriesMap[indicatorName] = series;
     }
     segment.forEach(tick => {
-        for (const indicator of Object.entries(tick.priceChartNumIndicators)) {
+        for (const indicator of Object.entries(tick.mainChartNumIndicators)) {
             var indicatorName = indicator[0];
             var indicatorValue = indicator[1];
             indicatorNameToSeriesMap[indicatorName].data.push({

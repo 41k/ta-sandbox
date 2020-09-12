@@ -8,6 +8,8 @@ import org.ta4j.core.num.Num;
 import root.application.model.Tick;
 import root.application.model.TradeVisualization;
 import root.domain.indicator.Indicator;
+import root.domain.indicator.RSIIndicator;
+import root.domain.indicator.RSILevelIndicator;
 import root.domain.indicator.SMAIndicator;
 import root.domain.strategy.StrategyFactory;
 
@@ -22,7 +24,9 @@ public class TradeVisualizationBuilder
     private static final HashSet<Class<? extends Indicator<Num>>> MAIN_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
             SMAIndicator.class
     ));
-    private static final HashSet<Class<? extends Indicator<Num>>> ADDITIONAL_CHART_NUM_INDICATOR_TYPES = new HashSet<>();
+    private static final HashSet<Class<? extends Indicator<Num>>> ADDITIONAL_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
+            RSIIndicator.class, RSILevelIndicator.class
+    ));
 
     private final int nTicksBeforeTrade;
     private final int nTicksAfterTrade;
