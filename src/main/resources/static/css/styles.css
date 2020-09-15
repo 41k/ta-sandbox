@@ -33,7 +33,8 @@ body {
     margin: 0 auto;
 }
 
-#chart, .chart-box, .trade-wrapper {
+#chart, .chart-box,
+.trade-wrapper, .tick-series-wrapper {
     margin: 35px auto;
     padding-top: 10px;
     padding-left: 10px;
@@ -42,7 +43,8 @@ body {
     box-shadow: 0 22px 35px -16px rgba(0,0,0, 0.1);
 }
 
-.trade-wrapper p {
+.trade-wrapper p,
+.tick-series-wrapper p {
     display: block;
     padding: 20px 20px 0px 20px;
     margin: 0;
