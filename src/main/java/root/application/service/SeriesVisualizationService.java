@@ -7,8 +7,11 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
 import root.application.BarProvider;
 import root.application.model.Tick;
-import root.domain.indicator.RSIIndicator;
-import root.domain.indicator.RSILevelIndicator;
+import root.domain.indicator.macd.MACDIndicator;
+import root.domain.indicator.macd.MACDLevelIndicator;
+import root.domain.indicator.macd.MACDSignalLineIndicator;
+import root.domain.indicator.rsi.RSIIndicator;
+import root.domain.indicator.rsi.RSILevelIndicator;
 import root.domain.indicator.SMAIndicator;
 
 import java.util.ArrayList;
@@ -27,6 +30,10 @@ public class SeriesVisualizationService
     private static final String RSI_LEVEL_50_INDICATOR = "RSI-level(50)";
     private static final String RSI_LEVEL_30_INDICATOR = "RSI-level(30)";
 
+    private static final String MACD_INDICATOR = "MACD(12, 26)";
+    private static final String MACD_LEVEL_0_INDICATOR = "MACD-level(0)";
+    private static final String MACD_SIGNAL_LINE_INDICATOR = "MACD-signal(9)";
+
     private final BarProvider barProvider;
 
     public List<Tick> getSeries()
@@ -44,6 +51,10 @@ public class SeriesVisualizationService
         var rsiLevel50Indicator = new RSILevelIndicator(series, series.numOf(50));
         var rsiLevel30Indicator = new RSILevelIndicator(series, series.numOf(30));
 
+        var macdIndicator = new MACDIndicator(closePriceIndicator, 12, 26);
+        var macdSignalLineIndicator = new MACDSignalLineIndicator(macdIndicator, 9);
+        var macdLevel0Indicator = new MACDLevelIndicator(series, series.numOf(0));
+
         var seriesVisualization = new ArrayList<Tick>();
         for (int i = series.getBeginIndex(); i <= series.getEndIndex(); i++)
         {
@@ -57,6 +68,9 @@ public class SeriesVisualizationService
             additionalChartNumIndicators.put(RSI_LEVEL_70_INDICATOR, getIndicatorValue(rsiLevel70Indicator, i));
             additionalChartNumIndicators.put(RSI_LEVEL_50_INDICATOR, getIndicatorValue(rsiLevel50Indicator, i));
             additionalChartNumIndicators.put(RSI_LEVEL_30_INDICATOR, getIndicatorValue(rsiLevel30Indicator, i));
+            additionalChartNumIndicators.put(MACD_INDICATOR, getIndicatorValue(macdIndicator, i));
+            additionalChartNumIndicators.put(MACD_SIGNAL_LINE_INDICATOR, getIndicatorValue(macdSignalLineIndicator, i));
+            additionalChartNumIndicators.put(MACD_LEVEL_0_INDICATOR, getIndicatorValue(macdLevel0Indicator, i));
 
             var bar = series.getBar(i);
             var tick = Tick.builder()

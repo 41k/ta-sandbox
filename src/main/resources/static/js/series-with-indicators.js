@@ -1,6 +1,6 @@
 var wrapperId = 'charts';
-var priceChartType = 'line';
-//var priceChartType = 'candlestick';
+//var priceChartType = 'line';
+var priceChartType = 'candlestick';
 var seriesSegmentSize = 100;
 
 var request = new XMLHttpRequest();

@@ -1,6 +1,6 @@
 var wrapperId = 'trades';
-var priceChartType = 'line';
-//var priceChartType = 'candlestick';
+//var priceChartType = 'line';
+var priceChartType = 'candlestick';
 
 var request = new XMLHttpRequest();
 request.open('GET', 'http://localhost:8881/api/strategy/analysis-report');

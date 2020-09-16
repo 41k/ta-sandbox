@@ -2,7 +2,7 @@ function ChartRenderer(wrapperId, priceChartType) {
 
     var wrapperId = wrapperId;
     var priceChartType = priceChartType;
-    var additionalChartIndicatorTypes = ['RSI'];
+    var additionalChartIndicatorTypes = ['RSI', 'MACD'];
 
     this.renderTickSeries = function(tickSeries, seriesSegmentSize) {
         var tickSeriesSegments = formSeriesSegments(tickSeries, seriesSegmentSize);

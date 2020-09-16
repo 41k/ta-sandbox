@@ -6,6 +6,9 @@ import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
+import root.domain.indicator.macd.MACDIndicator;
+import root.domain.indicator.macd.MACDLevelIndicator;
+import root.domain.indicator.macd.MACDSignalLineIndicator;
 import root.domain.indicator.rsi.RSIIndicator;
 import root.domain.indicator.rsi.RSILevelIndicator;
 
@@ -26,15 +29,16 @@ import root.domain.indicator.rsi.RSILevelIndicator;
 //    Sell rule:
 //        (closePrice crosses up mediumSma)
 
-public class SmaStrategy1BFactory extends AbstractSmaStrategyFactory
+public class SmaStrategy1CFactory extends AbstractSmaStrategyFactory
 {
-    public SmaStrategy1BFactory(String strategyId, BarSeries series, int shortSmaLength, int mediumSmaLength, int longSmaLength)
+    public SmaStrategy1CFactory(String strategyId, BarSeries series, int shortSmaLength, int mediumSmaLength, int longSmaLength)
     {
         super(strategyId, series, shortSmaLength, mediumSmaLength, longSmaLength);
-        numIndicators.add(new RSIIndicator(closePriceIndicator, 12));
-        numIndicators.add(new RSILevelIndicator(series, series.numOf(70)));
-        numIndicators.add(new RSILevelIndicator(series, series.numOf(50)));
-        numIndicators.add(new RSILevelIndicator(series, series.numOf(30)));
+
+        MACDIndicator macdIndicator = new MACDIndicator(closePriceIndicator, 12, 26);
+        numIndicators.add(macdIndicator);
+        numIndicators.add(new MACDSignalLineIndicator(macdIndicator, 9));
+        numIndicators.add(new MACDLevelIndicator(series, series.numOf(0)));
     }
 
     @Override

@@ -23,7 +23,7 @@ public class StrategyAnalysisService
     {
         var bars = barProvider.getMinuteBars();
         var series = new BaseBarSeries(bars);
-        var strategyFactory = new SmaStrategy1BFactory("SMA3", series, 7, 25, 100);
+        var strategyFactory = new SmaStrategy1CFactory("SMA3", series, 7, 25, 100);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);

@@ -1,6 +1,7 @@
-package root.domain.indicator;
+package root.domain.indicator.rsi;
 
 import org.ta4j.core.num.Num;
+import root.domain.indicator.Indicator;
 
 import static java.lang.String.format;
 

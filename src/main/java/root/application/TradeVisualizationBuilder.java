@@ -8,8 +8,11 @@ import org.ta4j.core.num.Num;
 import root.application.model.Tick;
 import root.application.model.TradeVisualization;
 import root.domain.indicator.Indicator;
-import root.domain.indicator.RSIIndicator;
-import root.domain.indicator.RSILevelIndicator;
+import root.domain.indicator.macd.MACDIndicator;
+import root.domain.indicator.macd.MACDLevelIndicator;
+import root.domain.indicator.macd.MACDSignalLineIndicator;
+import root.domain.indicator.rsi.RSIIndicator;
+import root.domain.indicator.rsi.RSILevelIndicator;
 import root.domain.indicator.SMAIndicator;
 import root.domain.strategy.StrategyFactory;
 
@@ -25,7 +28,8 @@ public class TradeVisualizationBuilder
             SMAIndicator.class
     ));
     private static final HashSet<Class<? extends Indicator<Num>>> ADDITIONAL_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
-            RSIIndicator.class, RSILevelIndicator.class
+            RSIIndicator.class, RSILevelIndicator.class,
+            MACDIndicator.class, MACDSignalLineIndicator.class, MACDLevelIndicator.class
     ));
 
     private final int nTicksBeforeTrade;
