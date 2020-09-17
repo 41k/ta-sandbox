@@ -9,7 +9,7 @@ import org.ta4j.core.num.PrecisionNum;
 import root.application.BarProvider;
 import root.application.TradeVisualizationBuilder;
 import root.application.model.StrategyAnalysisReport;
-import root.domain.strategy.sma.*;
+import root.domain.strategy.sma.SmaStrategy1BFactory;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class StrategyAnalysisService
     {
         var bars = barProvider.getMinuteBars();
         var series = new BaseBarSeries(bars);
-        var strategyFactory = new SmaStrategy1CFactory("SMA3", series, 7, 25, 100);
+        var strategyFactory = new SmaStrategy1BFactory("SMA", series, 7, 25, 100);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);

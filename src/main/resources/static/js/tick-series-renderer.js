@@ -2,7 +2,7 @@ function ChartRenderer(wrapperId, priceChartType) {
 
     var wrapperId = wrapperId;
     var priceChartType = priceChartType;
-    var additionalChartIndicatorTypes = ['RSI', 'MACD'];
+    var additionalChartIndicatorTypes = ['RSI', 'MACD', 'OBV'];
 
     this.renderTickSeries = function(tickSeries, seriesSegmentSize) {
         var tickSeriesSegments = formSeriesSegments(tickSeries, seriesSegmentSize);
@@ -97,6 +97,7 @@ function ChartRenderer(wrapperId, priceChartType) {
     }
 
     var createCommonOptionsForMainChart = function(chartsGroupName) {
+        var chartTitle = 'MAIN';
         return {
             series: [],
             annotations: {
@@ -105,13 +106,15 @@ function ChartRenderer(wrapperId, priceChartType) {
             chart: {
                 height: 350,
                 type: 'line',
-                group: chartsGroupName,
+                // It slows UI:
+                //id: chartsGroupName + '-' + chartTitle,
+                //group: chartsGroupName,
                 toolbar: {
                     show: false
                 }
             },
             title: {
-                text: 'MAIN',
+                text: chartTitle,
                 align: 'center'
             },
             stroke: {
@@ -286,6 +289,7 @@ function ChartRenderer(wrapperId, priceChartType) {
         }
         var options = createCommonOptionsForAdditionalChart(chartsGroupName, indicatorType);
         addSeries(options, indicatorTypeSeries);
+        addSignals(options, ticks);
         addXAxisTimeLabels(options, ticks);
         var additionalChartWrapperId = indicatorType + '-chart-' + index;
         var additionalChartWrapper = createChartWrapper(additionalChartWrapperId);
@@ -310,24 +314,23 @@ function ChartRenderer(wrapperId, priceChartType) {
             chart: {
                 height: 250,
                 type: 'line',
-                group: chartsGroupName,
+                // It slows UI:
+                //id: chartsGroupName + '-' + chartTitle,
+                //group: chartsGroupName,
                 toolbar: {
                     show: false
                 }
             },
             series: [],
+            annotations: {
+                xaxis: []
+            },
             dataLabels: {
                 enabled: false
             },
             stroke: {
                 curve: 'straight',
                 width: 2
-            },
-            grid: {
-                padding: {
-                    right: 30,
-                    left: 20
-                }
             },
             title: {
                 text: chartTitle,
@@ -346,7 +349,7 @@ function ChartRenderer(wrapperId, priceChartType) {
                 opposite: true,
                 labels: {
                     formatter: (val) => val.toFixed(2),
-                    minWidth: 40
+                    minWidth: 50
                 }
             }
         };

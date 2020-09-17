@@ -12,7 +12,7 @@ import root.infrastructure.CsvBarProvider;
 @Configuration
 public class ApplicationConfiguration
 {
-    private static final int N_TICKS_BEFORE_TRADE = 40;
+    private static final int N_TICKS_BEFORE_TRADE = 70;
     private static final int N_TICKS_AFTER_TRADE = 20;
 
     @Bean
