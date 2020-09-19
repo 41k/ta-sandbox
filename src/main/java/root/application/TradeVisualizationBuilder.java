@@ -7,6 +7,7 @@ import org.ta4j.core.Trade;
 import org.ta4j.core.num.Num;
 import root.application.model.Tick;
 import root.application.model.TradeVisualization;
+import root.domain.indicator.EMAIndicator;
 import root.domain.indicator.Indicator;
 import root.domain.indicator.OBVIndicator;
 import root.domain.indicator.macd.MACDIndicator;
@@ -26,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 public class TradeVisualizationBuilder
 {
     private static final HashSet<Class<? extends Indicator<Num>>> MAIN_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
-            SMAIndicator.class
+            SMAIndicator.class, EMAIndicator.class
     ));
     private static final HashSet<Class<? extends Indicator<Num>>> ADDITIONAL_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
             RSIIndicator.class, RSILevelIndicator.class,

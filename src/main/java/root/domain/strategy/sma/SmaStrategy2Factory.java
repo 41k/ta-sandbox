@@ -75,3 +75,10 @@ public class SmaStrategy2Factory extends AbstractSmaStrategyFactory
 //        N profitable trades (UP): 27
 //        N unprofitable trades (DOWN): 3
 //        Risk/Reward ratio: 0.1111111111111111
+//
+//    Series-3 [ohlcvt-1m-3.csv] results:
+//        Total profit: 303.44
+//        N trades: 25
+//        N profitable trades (UP): 21
+//        N unprofitable trades (DOWN): 4
+//        Risk/Reward ratio: 0.19047619047619047

@@ -9,24 +9,31 @@ import static java.lang.Boolean.FALSE;
 public class SameBarTypeSubSeriesIndicator extends AbstractBarIndicator
 {
     private final BarType barType;
-    private final int nBars;
+    private final int subSeriesLength;
+    private final int offset;
 
-    public SameBarTypeSubSeriesIndicator(BarType barType, int nBars, BarSeries series)
+    public SameBarTypeSubSeriesIndicator(BarType barType, int subSeriesLength, BarSeries series)
+    {
+        this(barType, subSeriesLength, 0, series);
+    }
+
+    public SameBarTypeSubSeriesIndicator(BarType barType, int subSeriesLength, int offset, BarSeries series)
     {
         super(series);
         this.barType = barType;
-        this.nBars = nBars;
+        this.subSeriesLength = subSeriesLength;
+        this.offset = offset;
     }
 
     @Override
     protected Boolean calculate(int index)
     {
-        if (isNotAcceptableIndex(index, nBars))
+        if (isNotAcceptableIndex(index, subSeriesLength))
         {
             return FALSE;
         }
-        int subSeriesStartIndex = index - nBars + 1;
-        int subSeriesEndIndex = index;
+        int subSeriesEndIndex = index - offset;
+        int subSeriesStartIndex = subSeriesEndIndex - subSeriesLength + 1;
         return doesSubSeriesHasAllowedBarTypes(Set.of(barType), subSeriesStartIndex, subSeriesEndIndex);
     }
 }

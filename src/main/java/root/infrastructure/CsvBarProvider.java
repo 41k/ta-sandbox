@@ -23,7 +23,7 @@ public class CsvBarProvider implements BarProvider
     @Override
     public List<Bar> getMinuteBars()
     {
-        return getMinuteBars("data/ohlcvt-1m-3.csv");
+        return getMinuteBars("data/ohlcvt-1m-1.csv");
     }
 
     @Override

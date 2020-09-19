@@ -8,6 +8,8 @@ import org.ta4j.core.trading.rules.BooleanIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import root.domain.indicator.bar.StrongBarIndicator;
+import root.domain.indicator.trend.DownTrendIndicator;
+import root.domain.indicator.trend.UpTrendIndicator;
 
 import java.util.Set;
 
@@ -20,20 +22,18 @@ import static root.domain.indicator.bar.BarType.BULLISH;
 //    * SMA(100) - longSma
 //
 //    Buy rule:
-//        (longSma < shortSma < mediumSma)
+//        (shortSma < longSma)
 //        AND
-//        (strongBullishBar(2) crosses up shortSma)
+//        (mediumSma < longSma)
 //        AND
-//        (closePrice < mediumSma)
-
+//        (longSma is in downTrend(70, 0.1))
+//        AND
+//        (strongBullishBar(4) crosses up shortSma and mediumSma)
+//        AND
+//        (closePrice < longSma)
+//
 //    Sell rule:
-//        [(closePrice crosses up mediumSma)
-//        AND
-//        (longSma < mediumSma)]
-//        OR
-//        [(mediumSma < longSma)
-//        AND
-//        (shortSma crosses up longSma)]
+//        (closePrice crosses up longSma)
 
 public class SmaStrategy4Factory extends AbstractSmaStrategyFactory
 {
@@ -45,49 +45,52 @@ public class SmaStrategy4Factory extends AbstractSmaStrategyFactory
     @Override
     public Strategy create()
     {
-        StrongBarIndicator strongBullishBarIndicator = new StrongBarIndicator(BULLISH, Set.of(BULLISH, BEARISH), 2, series);
+        StrongBarIndicator strongBullishBarIndicator = new StrongBarIndicator(BULLISH, Set.of(BULLISH, BEARISH), 4, series);
+        DownTrendIndicator longSmaDownTrendIndicator = new DownTrendIndicator(longSmaIndicator, 70, 0.1);
 
-        Rule entryRule = // Buy rule
-                // (longSma < shortSma < mediumSma)
-                new UnderIndicatorRule(longSmaIndicator, shortSmaIndicator)
-                .and(new UnderIndicatorRule(shortSmaIndicator, mediumSmaIndicator))
+        Rule entryRule = // Buy rule:
+                // (shortSma < longSma)
+                new UnderIndicatorRule(shortSmaIndicator, longSmaIndicator)
                 // AND
-                // (strongBullishBar(2) crosses up shortSma)
-                .and(new CrossedUpIndicatorRule(closePriceIndicator, shortSmaIndicator))
+                // (mediumSma < longSma)
+                .and(new UnderIndicatorRule(mediumSmaIndicator, longSmaIndicator))
+                // AND
+                // (longSma is in downTrend(70, 0.1))
+                .and(new BooleanIndicatorRule(longSmaDownTrendIndicator))
+                // AND
+                // (strongBullishBar(4) crosses up shortSma and mediumSma)
                 .and(new BooleanIndicatorRule(strongBullishBarIndicator))
+                .and(new CrossedUpIndicatorRule(closePriceIndicator, shortSmaIndicator))
+                .and(new CrossedUpIndicatorRule(closePriceIndicator, mediumSmaIndicator))
                 // AND
-                // (closePrice < mediumSma)
-                .and(new UnderIndicatorRule(closePriceIndicator, mediumSmaIndicator));
+                // (closePrice < longSma)
+                .and(new UnderIndicatorRule(closePriceIndicator, longSmaIndicator));
 
-        Rule exitRule = // Sell rule
-                // ((closePrice crosses up mediumSma)
-                new CrossedUpIndicatorRule(closePriceIndicator, mediumSmaIndicator)
-                // AND
-                // (longSma < mediumSma))
-                .and(new UnderIndicatorRule(longSmaIndicator, mediumSmaIndicator))
-                //
-                // OR
-                //
-                // ((mediumSma < longSma)
-                .or(new UnderIndicatorRule(mediumSmaIndicator, longSmaIndicator)
-                // AND
-                // (shortSma crosses up longSma))
-                .and(new CrossedUpIndicatorRule(shortSmaIndicator, longSmaIndicator)));
+        Rule exitRule = // Sell rule:
+                // (closePrice crosses up longSma)
+                new CrossedUpIndicatorRule(closePriceIndicator, longSmaIndicator);
 
         return new BaseStrategy(strategyId, entryRule, exitRule);
     }
 }
 
 //    Series-1 [ohlcvt-1m-1.csv] results:
-//        Total profit: 46.29
-//        N trades: 6
-//        N profitable trades (UP): 6
+//        Total profit: 12.05
+//        N trades: 1
+//        N profitable trades (UP): 1
 //        N unprofitable trades (DOWN): 0
 //        Risk/Reward ratio: 0
 //
 //    Series-2 [ohlcvt-1m-2.csv] results:
-//        Total profit: 93.76
-//        N trades: 29
-//        N profitable trades (UP): 25
-//        N unprofitable trades (DOWN): 4
-//        Risk/Reward ratio: 0.16
+//        Total profit: 174.33
+//        N trades: 12
+//        N profitable trades (UP): 11
+//        N unprofitable trades (DOWN): 1
+//        Risk/Reward ratio: 0.09090909090909091
+//
+//    Series-3 [ohlcvt-1m-3.csv] results:
+//        Total profit: 191.89
+//        N trades: 9
+//        N profitable trades (UP): 8
+//        N unprofitable trades (DOWN): 1
+//        Risk/Reward ratio: 0.125
