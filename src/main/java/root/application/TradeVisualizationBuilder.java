@@ -10,12 +10,13 @@ import root.application.model.TradeVisualization;
 import root.domain.indicator.EMAIndicator;
 import root.domain.indicator.Indicator;
 import root.domain.indicator.OBVIndicator;
+import root.domain.indicator.SMAIndicator;
 import root.domain.indicator.macd.MACDIndicator;
 import root.domain.indicator.macd.MACDLevelIndicator;
 import root.domain.indicator.macd.MACDSignalLineIndicator;
 import root.domain.indicator.rsi.RSIIndicator;
 import root.domain.indicator.rsi.RSILevelIndicator;
-import root.domain.indicator.SMAIndicator;
+import root.domain.level.Level;
 import root.domain.strategy.StrategyFactory;
 
 import java.util.*;
@@ -75,7 +76,7 @@ public class TradeVisualizationBuilder
         var startIndex = Math.max(0, entryOrderIndex - nTicksBeforeTrade - 1);
         for (int i = startIndex; i < entryOrderIndex; i++)
         {
-            var tick = buildTick(i, bars, strategyFactory);
+            var tick = getTickBuilder(i, bars, strategyFactory).build();
             ticks.add(tick);
         }
         return ticks;
@@ -95,7 +96,7 @@ public class TradeVisualizationBuilder
         var endIndex = Math.min(exitOrderIndex + nTicksAfterTrade + 1, seriesEndIndex);
         for (int i = startIndex; i <= endIndex; i++)
         {
-            var tick = buildTick(i, bars, strategyFactory);
+            var tick = getTickBuilder(i, bars, strategyFactory).build();
             ticks.add(tick);
         }
         return ticks;
@@ -111,21 +112,30 @@ public class TradeVisualizationBuilder
         var bars = series.getBarData();
         for (int i = entryOrderIndex; i <= exitOrderIndex; i++)
         {
-            var tick = buildTick(i, bars, strategyFactory);
+            var tickBuilder = getTickBuilder(i, bars, strategyFactory);
             if (i == entryOrderIndex)
             {
-                tick.setSignal(entryOrder.getType());
+                tickBuilder.signal(entryOrder.getType())
+                        .levels(getEntryOrderRelatedLevels(i, strategyFactory));
             }
             else if (i == exitOrderIndex)
             {
-                tick.setSignal(exitOrder.getType());
+                tickBuilder.signal(exitOrder.getType());
             }
-            ticks.add(tick);
+            ticks.add(tickBuilder.build());
         }
         return ticks;
     }
 
-    private Tick buildTick(int index, List<Bar> bars, StrategyFactory strategyFactory)
+    private List<Level> getEntryOrderRelatedLevels(int index, StrategyFactory strategyFactory)
+    {
+        return strategyFactory.getStopLossLevelProvider()
+                .map(levelProvider -> levelProvider.getLevel(index))
+                .map(List::of)
+                .orElseGet(List::of);
+    }
+
+    private Tick.TickBuilder getTickBuilder(int index, List<Bar> bars, StrategyFactory strategyFactory)
     {
         var bar = bars.get(index);
         var mainChartNumIndicators = getMainChartNumIndicators(index, strategyFactory);
@@ -138,8 +148,7 @@ public class TradeVisualizationBuilder
                 .volume(bar.getVolume().doubleValue())
                 .timestamp(bar.getEndTime().toInstant().toEpochMilli())
                 .mainChartNumIndicators(mainChartNumIndicators)
-                .additionalChartNumIndicators(additionalChartNumIndicators)
-                .build();
+                .additionalChartNumIndicators(additionalChartNumIndicators);
     }
 
     private Map<String, Double> getMainChartNumIndicators(int index, StrategyFactory strategyFactory)

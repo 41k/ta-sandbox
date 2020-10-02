@@ -1,14 +1,16 @@
 package root.application.model;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.NonNull;
+import lombok.Value;
 import org.ta4j.core.Order;
+import root.domain.level.Level;
 
+import java.util.List;
 import java.util.Map;
 
-@Data
-@Builder(toBuilder = true)
+@Value
+@Builder
 public class Tick
 {
     @NonNull
@@ -24,6 +26,8 @@ public class Tick
     @NonNull
     Long timestamp;
     Order.OrderType signal;
+    @Builder.Default
+    List<Level> levels = List.of();
     @Builder.Default
     Map<String, Double> mainChartNumIndicators = Map.of();
     @Builder.Default

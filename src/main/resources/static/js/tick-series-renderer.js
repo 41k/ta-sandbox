@@ -93,6 +93,7 @@ function ChartRenderer(wrapperId, priceChartType) {
         addLineIndicators(options, ticks);
         addPriceSeries(options, ticks);
         addSignals(options, ticks);
+        addLevels(options, ticks);
         return options;
     }
 
@@ -101,6 +102,7 @@ function ChartRenderer(wrapperId, priceChartType) {
         return {
             series: [],
             annotations: {
+                yaxis: [],
                 xaxis: []
             },
             chart: {
@@ -248,6 +250,34 @@ function ChartRenderer(wrapperId, priceChartType) {
                     color: "#fff",
                     background: colorHex
                 }
+            }
+        }
+    }
+
+    var addLevels = function(options, ticks) {
+        ticks.forEach(tick => {
+            var levels = tick.levels;
+            if (levels) {
+                levels.forEach(level => {
+                    options.annotations.yaxis.push(createLevel(level));
+                });
+            }
+        });
+    }
+
+    var createLevel = function(level) {
+        var colorHex = '#1ab394';
+        return {
+            y: level.value,
+            strokeDashArray: 0,
+            borderColor: colorHex,
+            label: {
+                borderColor: colorHex,
+                style: {
+                    color: '#fff',
+                    background: colorHex,
+                },
+                text: level.name,
             }
         }
     }

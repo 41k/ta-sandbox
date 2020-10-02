@@ -15,6 +15,7 @@ import root.domain.strategy.rsi_sma.RsiSmaStrategy2Factory;
 import root.domain.strategy.sma.SmaStrategy4Factory;
 import root.domain.strategy.sma.SmaStrategy5AFactory;
 import root.domain.strategy.sma.SmaStrategy5Factory;
+import root.domain.strategy.sma.StopLossStrategyTestFactory;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class StrategyAnalysisService
     {
         var bars = barProvider.getMinuteBars();
         var series = new BaseBarSeries(bars);
-        var strategyFactory = new SmaStrategy5AFactory("SMA", series, 7, 25, 100);
+        var strategyFactory = new StopLossStrategyTestFactory("SMA", series, 7, 25, 100);
         //var strategyFactory = new DojiStrategy1Factory("DOJI", series);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
