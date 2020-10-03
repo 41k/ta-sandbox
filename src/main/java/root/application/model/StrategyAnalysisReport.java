@@ -14,4 +14,6 @@ public class StrategyAnalysisReport
     Long nProfitableTrades;
     Long nUnprofitableTrades;
     Double riskRewardRatio;
+    List<Double> listOfNSignificantUps;
+    List<Double> listOfNSignificantDowns;
 }

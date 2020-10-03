@@ -22,4 +22,10 @@ function drawReport(report) {
     document.getElementById('n-up-trades').textContent = report.nprofitableTrades;
     document.getElementById('n-down-trades').textContent = report.nunprofitableTrades;
     document.getElementById('rr').textContent = report.riskRewardRatio;
+    document.getElementById('list-of-n-significant-ups').textContent = drawArray(report.listOfNSignificantUps);
+    document.getElementById('list-of-n-significant-downs').textContent = drawArray(report.listOfNSignificantDowns);
+}
+
+function drawArray(array) {
+    return '[' + array.join('  |  ') + ']';
 }
