@@ -54,11 +54,13 @@ public class TradeVisualizationBuilder
         var ticks = Stream.of(ticksBeforeTrade, ticksDuringTrade, ticksAfterTrade)
                 .flatMap(Collection::stream)
                 .collect(toList());
+        var entryTimestamp = getEntryTimestamp(ticksDuringTrade);
+        var exitTimestamp = getExitTimestamp(ticksDuringTrade);
         return TradeVisualization.builder()
                 .ticks(ticks)
                 .strategyId(strategyFactory.getStrategyId())
-                .entryIndex(trade.getEntry().getIndex())
-                .exitIndex(trade.getExit().getIndex())
+                .entryTimestamp(entryTimestamp)
+                .exitTimestamp(exitTimestamp)
                 .profit(trade.getProfit().doubleValue())
                 .build();
     }
@@ -181,5 +183,18 @@ public class TradeVisualizationBuilder
     {
         var indicatorValue = indicator.getValue(index);
         return indicatorValue.isNaN() ? null : indicatorValue.doubleValue();
+    }
+
+    private Long getEntryTimestamp(List<Tick> ticksDuringTrade)
+    {
+        var entryTick = ticksDuringTrade.get(0);
+        return entryTick.getTimestamp();
+    }
+
+    private Long getExitTimestamp(List<Tick> ticksDuringTrade)
+    {
+        var lastIndex = ticksDuringTrade.size() - 1;
+        var exitTick = ticksDuringTrade.get(lastIndex);
+        return exitTick.getTimestamp();
     }
 }

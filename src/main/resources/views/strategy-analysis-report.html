@@ -1,26 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Strategy Analysis Report</title>
-    <link href="../static/css/styles.css" rel="stylesheet" />
-    <script src="../static/js/apexcharts.js"></script>
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Strategy Analysis Report</title>
+        <link href="../static/css/styles.css" rel="stylesheet" />
+        <link href="../static/libs/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="../static/libs/datatables-1.10.22/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+        <script src="../static/libs/jquery-3.5.1/jquery.min.js"></script>
+        <script src="../static/libs/datatables-1.10.22/js/jquery.dataTables.min.js"></script>
+        <script src="../static/libs/datatables-1.10.22/js/dataTables.bootstrap.min.js"></script>
+        <script src="../static/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+        <script src="../static/libs/apexcharts-3.20.0/apexcharts.min.js"></script>
+        <script src="../static/libs/date.format-1.2.3/date.format.js"></script>
+    </head>
 
-  <body>
-     <div id="report">
-       <p>Total profit: <span id="total-profit"></span></p>
-       <p>N trades: <span id="n-trades"></span></p>
-       <p>N profitable trades (UP): <span id="n-up-trades"></span></p>
-       <p>N unprofitable trades (DOWN): <span id="n-down-trades"></span></p>
-       <p>Risk/Reward ratio: <span id="rr"></span></p>
-       <p>Significant UPs: <span id="list-of-n-significant-ups"></span></p>
-       <p>Significant DOWNs: <span id="list-of-n-significant-downs"></span></p>
-     </div>
-     <div id="trades"></div>
-     <script src="../static/js/tick-series-renderer.js"></script>
-     <script src="../static/js/strategy-analysis-report.js"></script>
-  </body>
+    <body>
+        <div class="main-wrapper">
+            <div class="panel panel-primary m-t-30">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-signal" aria-hidden="true"></span>
+                        Strategy Analysis Report
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>PARAMETER</th>
+                                <th>VALUE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Total profit:</b></td>
+                                <td id="total-profit"></td>
+                            </tr>
+                            <tr>
+                                <td><b>N trades:</b></td>
+                                <td id="n-trades"></td>
+                            </tr>
+                            <tr>
+                                <td><b>N profitable trades (UP):</b></td>
+                                <td id="n-up-trades"></td>
+                            </tr>
+                            <tr>
+                                <td><b>N unprofitable trades (DOWN):</b></td>
+                                <td id="n-down-trades"></td>
+                            </tr>
+                            <tr>
+                                <td><b>Risk/Reward ratio:</b></td>
+                                <td id="risk-reward-ratio"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="panel panel-primary m-t-30">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        Trades overview
+                    </h3>
+                </div>
+                <div class="panel-body" id="trades-overview"></div>
+            </div>
+            <button class="btn btn-primary" onclick="drawAllTrades(this);">Draw all trades</button>
+            <div id="all-trades"></div>
+        </div>
+        <!--POPUP-->
+        <div id="popup-background"></div>
+        <div id="trade-visualization-popup" class="popup">
+            <div id="trade-visualization" class="popup-content"></div>
+        </div>
+        
+        <script src="../static/js/utils.js"></script>
+        <script src="../static/js/chart-renderer.js"></script>
+        <script src="../static/js/strategy-analysis-report.js"></script>
+    </body>
 </html>

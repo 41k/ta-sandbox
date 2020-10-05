@@ -64,10 +64,10 @@ public class SeriesVisualizationService
             mainChartNumIndicators.put(LONG_SMA_INDICATOR, getIndicatorValue(longSmaIndicator, i));
 
             var additionalChartNumIndicators = new LinkedHashMap<String, Double>();
-//            additionalChartNumIndicators.put(RSI_INDICATOR, getIndicatorValue(rsiIndicator, i));
-//            additionalChartNumIndicators.put(RSI_LEVEL_70_INDICATOR, getIndicatorValue(rsiLevel70Indicator, i));
-//            additionalChartNumIndicators.put(RSI_LEVEL_50_INDICATOR, getIndicatorValue(rsiLevel50Indicator, i));
-//            additionalChartNumIndicators.put(RSI_LEVEL_30_INDICATOR, getIndicatorValue(rsiLevel30Indicator, i));
+            additionalChartNumIndicators.put(RSI_INDICATOR, getIndicatorValue(rsiIndicator, i));
+            additionalChartNumIndicators.put(RSI_LEVEL_70_INDICATOR, getIndicatorValue(rsiLevel70Indicator, i));
+            additionalChartNumIndicators.put(RSI_LEVEL_50_INDICATOR, getIndicatorValue(rsiLevel50Indicator, i));
+            additionalChartNumIndicators.put(RSI_LEVEL_30_INDICATOR, getIndicatorValue(rsiLevel30Indicator, i));
 //            additionalChartNumIndicators.put(MACD_INDICATOR, getIndicatorValue(macdIndicator, i));
 //            additionalChartNumIndicators.put(MACD_SIGNAL_LINE_INDICATOR, getIndicatorValue(macdSignalLineIndicator, i));
 //            additionalChartNumIndicators.put(MACD_LEVEL_0_INDICATOR, getIndicatorValue(macdLevel0Indicator, i));

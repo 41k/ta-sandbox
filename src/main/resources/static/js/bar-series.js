@@ -97,10 +97,8 @@ function addSeries(segment, options) {
 
 function createChartWrapper(index) {
     var chartDivId = "chart-" + index;
-    var chartDivClass = "chart-box";
     var chartDiv = document.createElement("div");
     chartDiv.setAttribute("id", chartDivId);
-    chartDiv.setAttribute("class", chartDivClass);
     document.getElementById("charts").appendChild(chartDiv);
     return "#" + chartDivId;
 }

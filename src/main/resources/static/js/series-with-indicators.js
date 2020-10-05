@@ -1,6 +1,7 @@
 var wrapperId = 'charts';
 //var priceChartType = 'line';
 var priceChartType = 'candlestick';
+var chartRenderer = new ChartRenderer(priceChartType);
 var seriesSegmentSize = 150;
 
 var request = new XMLHttpRequest();
@@ -10,6 +11,5 @@ request.send();
 
 function processResponse() {
     var series = JSON.parse(request.responseText);
-    var chartRenderer = new ChartRenderer(wrapperId, priceChartType);
-    chartRenderer.renderTickSeries(series, seriesSegmentSize);
+    chartRenderer.renderTickSeries(series, seriesSegmentSize, wrapperId);
 }

@@ -11,7 +11,7 @@ public class TradeVisualization
 {
     List<Tick> ticks;
     String strategyId;
-    Integer entryIndex;
-    Integer exitIndex;
+    Long entryTimestamp;
+    Long exitTimestamp;
     Double profit;
 }

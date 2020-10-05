@@ -1,95 +1,85 @@
-function ChartRenderer(wrapperId, priceChartType) {
+function ChartRenderer(priceChartType) {
 
-    var wrapperId = wrapperId;
     var priceChartType = priceChartType;
+    var dateTimeFormat = 'yyyy-mm-dd HH:MM:ss';
+    var timeFormat = 'HH:MM:ss';
     var additionalChartIndicatorTypes = ['RSI', 'MACD', 'OBV'];
 
-    this.renderTickSeries = function(tickSeries, seriesSegmentSize) {
+    this.renderTickSeries = function(tickSeries, seriesSegmentSize, wrapperId) {
         var tickSeriesSegments = formSeriesSegments(tickSeries, seriesSegmentSize);
-        for (var i = 0; i < tickSeriesSegments.length; i++) {
-            var ticks = tickSeriesSegments[i];
-            renderTickSeriesSegment(ticks, i, seriesSegmentSize);
-        }
+        tickSeriesSegments.forEach(segment => renderTickSeriesSegment(segment, wrapperId));
     }
 
-    this.renderTrades = function(trades) {
-        for (var i = 0; i < trades.length; i++) {
-            var trade = trades[i];
-            renderTrade(trade, i);
-        }
+    this.renderTrades = function(trades, wrapperId) {
+        trades.forEach(trade => this.renderTrade(trade, wrapperId));
     }
 
-    var renderTickSeriesSegment = function(ticks, index, seriesSegmentSize) {
-        var chartsGroupWrapper = createTickSeriesSegmentChartsGroupWrapper(ticks, index, seriesSegmentSize);
-        var chartsGroupName = 'group-' + index;
-        renderMainChart(ticks, index, chartsGroupWrapper, chartsGroupName);
-        renderAdditionalCharts(ticks, index, chartsGroupWrapper, chartsGroupName);
-    }
-
-    var createTickSeriesSegmentChartsGroupWrapper = function(ticks, index, seriesSegmentSize) {
-        var tickSeriesWrapperId = 'tick-series-' + index;
-        var tickSeriesWrapperClass = 'tick-series-wrapper';
-        var tickSeriesWrapper = document.createElement('div');
-        tickSeriesWrapper.setAttribute('id', tickSeriesWrapperId);
-        tickSeriesWrapper.setAttribute('class', tickSeriesWrapperClass);
-        addTickSeriesLabel(ticks, index, seriesSegmentSize, tickSeriesWrapper);
-        document.getElementById(wrapperId).appendChild(tickSeriesWrapper);
-        return tickSeriesWrapper;
-    }
-
-    var addTickSeriesLabel = function(segment, index, seriesSegmentSize, tickSeriesWrapper) {
-        var segmentStartIndex = (index * seriesSegmentSize);
-        var segmentEndIndex = segmentStartIndex + segment.length - 1;
-        var labelText = 'Tick indexes: ' + segmentStartIndex + ' - ' + segmentEndIndex;
-        var tickSeriesLabel = document.createElement('p');
-        tickSeriesLabel.textContent = labelText;
-        tickSeriesWrapper.appendChild(tickSeriesLabel);
-    }
-
-    var renderTrade = function(trade, index) {
+    this.renderTrade = function(trade, wrapperId) {
         var ticks = trade.ticks;
-        var chartsGroupWrapper = createTradeChartsGroupWrapper(trade, index);
-        var chartsGroupName = 'group-' + index;
-        renderMainChart(ticks, index, chartsGroupWrapper, chartsGroupName);
-        renderAdditionalCharts(ticks, index, chartsGroupWrapper, chartsGroupName);
+        var chartsGroupWrapper = createTradeChartsGroupWrapper(trade, wrapperId);
+        renderMainChart(ticks, chartsGroupWrapper);
+        renderAdditionalCharts(ticks, chartsGroupWrapper);
     }
 
-    var createTradeChartsGroupWrapper = function(trade, index) {
-        var tradeWrapperId = 'trade-' + index;
-        var tradeWrapperClass = 'trade-wrapper';
-        var tradeWrapper = document.createElement('div');
-        tradeWrapper.setAttribute('id', tradeWrapperId);
-        tradeWrapper.setAttribute('class', tradeWrapperClass);
-        addTradeLabel(tradeWrapper, trade);
-        document.getElementById(wrapperId).appendChild(tradeWrapper);
-        return tradeWrapper;
+    var renderTickSeriesSegment = function(ticks, wrapperId) {
+        var chartsGroupWrapper = createTickSeriesSegmentChartsGroupWrapper(ticks, wrapperId);
+        renderMainChart(ticks, chartsGroupWrapper);
+        renderAdditionalCharts(ticks, chartsGroupWrapper);
     }
 
-    var addTradeLabel = function(tradeWrapper, trade) {
-        var tradeLabel = document.createElement('p');
+    var createTickSeriesSegmentChartsGroupWrapper = function(ticks, wrapperId) {
+        var segmentPanelHeader = createSegmentPanelHeader(ticks);
+        var segmentPanelBody = createDomElement('div', 'panel-body');
+        var segmentPanel = createDomElementWithChildren('div', [segmentPanelHeader, segmentPanelBody], 'm-t-30 panel panel-primary');
+        document.getElementById(wrapperId).appendChild(segmentPanel);
+        return segmentPanelBody;
+    }
+
+    var createSegmentPanelHeader = function(segment) {
+        var segmentStartTimestamp = segment[0].timestamp;
+        var segmentEndTimestamp = segment[segment.length - 1].timestamp;
+        var segmentStartTime = formDateTimeString(segmentStartTimestamp, dateTimeFormat);
+        var segmentEndTime = formDateTimeString(segmentEndTimestamp, dateTimeFormat);
+        var labelText = 'From [' + segmentStartTime + '] To [' + segmentEndTime + ']';
+        var h3 = createDomElementWithInnerHTML('h3', labelText, 'panel-title')
+        var panelHeader = createDomElementWithChildren('div', [h3], 'panel-heading');
+        return panelHeader;
+    }
+
+    var createTradeChartsGroupWrapper = function(trade, wrapperId) {
+        var tradePanelHeader = createTradePanelHeader(trade);
+        var tradePanelBody = createDomElement('div', 'panel-body');
+        var panelTypeClass = trade.profit > 0 ? 'panel-success' : 'panel-danger';
+        var panelClasses = 'm-t-30 panel ' + panelTypeClass;
+        var tradePanel = createDomElementWithChildren('div', [tradePanelHeader, tradePanelBody], panelClasses);
+        document.getElementById(wrapperId).appendChild(tradePanel);
+        return tradePanelBody;
+    }
+
+    var createTradePanelHeader = function(trade) {
         var profit = trade.profit;
         var isProfitableTrade = profit > 0;
-        var labelClass = isProfitableTrade ? 'up' : 'down';
-        tradeLabel.setAttribute('class', labelClass);
         var profitText = (isProfitableTrade ? 'UP' : 'DOWN') + '[' + profit + ']';
-        var fromToIndexesText = '[' + trade.entryIndex + ':' + trade.exitIndex + ']';
+        var entryTime = formDateTimeString(trade.entryTimestamp, timeFormat);
+        var exitTime = formDateTimeString(trade.exitTimestamp, timeFormat);
+        var tradeTimeRange = 'From [' + entryTime + '] To [' + exitTime + ']';
         var strategyId = trade.strategyId;
         var delimiter = ' --- ';
-        var labelText = profitText + delimiter + fromToIndexesText + delimiter + strategyId;
-        tradeLabel.textContent = labelText;
-        tradeWrapper.appendChild(tradeLabel);
+        var labelText = profitText + delimiter + tradeTimeRange + delimiter + strategyId;
+        var h3 = createDomElementWithInnerHTML('h3', labelText, 'panel-title')
+        var panelHeader = createDomElementWithChildren('div', [h3], 'panel-heading');
+        return panelHeader;
     }
 
-    var renderMainChart = function(ticks, index, chartsGroupWrapper, chartsGroupName) {
-        var options = createMainChartOptions(ticks, chartsGroupName);
-        var mainChartWrapperId = 'MAIN-chart-' + index;
-        var mainChartWrapper = createChartWrapper(mainChartWrapperId);
+    var renderMainChart = function(ticks, chartsGroupWrapper) {
+        var options = createMainChartOptions(ticks);
+        var mainChartWrapper = createDomElement('div');
         chartsGroupWrapper.appendChild(mainChartWrapper);
         new ApexCharts(mainChartWrapper, options).render();
     }
 
-    var createMainChartOptions = function(ticks, chartsGroupName) {
-        var options = createCommonOptionsForMainChart(chartsGroupName);
+    var createMainChartOptions = function(ticks) {
+        var options = createCommonOptionsForMainChart();
         addLineIndicators(options, ticks);
         addPriceSeries(options, ticks);
         addSignals(options, ticks);
@@ -97,7 +87,7 @@ function ChartRenderer(wrapperId, priceChartType) {
         return options;
     }
 
-    var createCommonOptionsForMainChart = function(chartsGroupName) {
+    var createCommonOptionsForMainChart = function() {
         var chartTitle = 'MAIN';
         return {
             series: [],
@@ -108,9 +98,6 @@ function ChartRenderer(wrapperId, priceChartType) {
             chart: {
                 height: 350,
                 type: 'line',
-                // It slows UI:
-                //id: chartsGroupName + '-' + chartTitle,
-                //group: chartsGroupName,
                 toolbar: {
                     show: false
                 }
@@ -126,15 +113,14 @@ function ChartRenderer(wrapperId, priceChartType) {
                 tooltip: {
                     enabled: true,
                     offsetY: 40,
-                    formatter: (timestamp) => new Date(timestamp).toUTCString()
+                    formatter: (timestamp) => formDateTimeString(timestamp, timeFormat)
                 },
                 type: 'datetime',
             },
             yaxis: {
                 opposite: true,
                 labels: {
-                    formatter: (val) => val.toFixed(2),
-                    minWidth: 50
+                    formatter: (val) => val.toFixed(2)
                 }
             },
             plotOptions: {
@@ -146,12 +132,6 @@ function ChartRenderer(wrapperId, priceChartType) {
                 }
             }
         };
-    }
-
-    var createChartWrapper = function(chartWrapperId) {
-        var chartWrapper = document.createElement("div");
-        chartWrapper.setAttribute("id", chartWrapperId);
-        return chartWrapper;
     }
 
     var addLineIndicators = function(options, ticks) {
@@ -247,7 +227,7 @@ function ChartRenderer(wrapperId, priceChartType) {
                 offsetX: 8,
                 borderWidth: 0,
                 style: {
-                    color: "#fff",
+                    color: '#fff',
                     background: colorHex
                 }
             }
@@ -282,10 +262,10 @@ function ChartRenderer(wrapperId, priceChartType) {
         }
     }
 
-    var renderAdditionalCharts = function(ticks, index, chartsGroupWrapper, chartsGroupName) {
+    var renderAdditionalCharts = function(ticks, chartsGroupWrapper) {
         var indicatorNameToSeriesMap = formAdditionalChartNumIndicatorNameToSeriesMap(ticks);
         additionalChartIndicatorTypes.forEach(indicatorType => {
-            renderAdditionalChart(indicatorType, indicatorNameToSeriesMap, ticks, index, chartsGroupWrapper, chartsGroupName);
+            renderAdditionalChart(indicatorType, indicatorNameToSeriesMap, ticks, chartsGroupWrapper);
         });
     }
 
@@ -312,17 +292,16 @@ function ChartRenderer(wrapperId, priceChartType) {
         return indicatorNameToSeriesMap;
     }
 
-    var renderAdditionalChart = function(indicatorType, indicatorNameToSeriesMap, ticks, index, chartsGroupWrapper, chartsGroupName) {
+    var renderAdditionalChart = function(indicatorType, indicatorNameToSeriesMap, ticks, chartsGroupWrapper) {
         var indicatorTypeSeries = getSeriesForIndicatorType(indicatorType, indicatorNameToSeriesMap);
         if (Object.keys(indicatorTypeSeries).length === 0) {
             return;
         }
-        var options = createCommonOptionsForAdditionalChart(chartsGroupName, indicatorType);
+        var options = createCommonOptionsForAdditionalChart(indicatorType);
         addSeries(options, indicatorTypeSeries);
         addSignals(options, ticks);
         addXAxisTimeLabels(options, ticks);
-        var additionalChartWrapperId = indicatorType + '-chart-' + index;
-        var additionalChartWrapper = createChartWrapper(additionalChartWrapperId);
+        var additionalChartWrapper = createDomElement('div');
         chartsGroupWrapper.appendChild(additionalChartWrapper);
         new ApexCharts(additionalChartWrapper, options).render();
     }
@@ -339,14 +318,11 @@ function ChartRenderer(wrapperId, priceChartType) {
         return indicatorTypeSeries;
     }
 
-    var createCommonOptionsForAdditionalChart = function(chartsGroupName, chartTitle) {
+    var createCommonOptionsForAdditionalChart = function(chartTitle) {
         return {
             chart: {
                 height: 250,
                 type: 'line',
-                // It slows UI:
-                //id: chartsGroupName + '-' + chartTitle,
-                //group: chartsGroupName,
                 toolbar: {
                     show: false
                 }
@@ -371,15 +347,14 @@ function ChartRenderer(wrapperId, priceChartType) {
                 tooltip: {
                     enabled: true,
                     offsetY: 40,
-                    formatter: (timestamp) => new Date(timestamp).toUTCString()
+                    formatter: (timestamp) => formDateTimeString(timestamp, timeFormat)
                 },
                 type: 'datetime'
             },
             yaxis: {
                 opposite: true,
                 labels: {
-                    formatter: (val) => val.toFixed(2),
-                    minWidth: 50
+                    formatter: (val) => val.toFixed(2)
                 }
             }
         };

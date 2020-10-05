@@ -10,6 +10,7 @@ import root.application.BarProvider;
 import root.application.TradeVisualizationBuilder;
 import root.application.model.StrategyAnalysisReport;
 import root.domain.strategy.rsi.RsiStrategy1Factory;
+import root.domain.strategy.sma.SmaStrategy5AFactory;
 
 import java.util.Comparator;
 import java.util.List;
@@ -20,14 +21,13 @@ public class StrategyAnalysisService
 {
     private final BarProvider barProvider;
     private final TradeVisualizationBuilder tradeVisualizationBuilder;
-    private final int nSignificantTrades;
 
     public StrategyAnalysisReport analyse()
     {
         var bars = barProvider.getMinuteBars();
         var series = new BaseBarSeries(bars);
-        //var strategyFactory = new SmaStrategy5AFactory("SMA", series, 7, 25, 100);
-        var strategyFactory = new RsiStrategy1Factory("RSI", series);
+        var strategyFactory = new SmaStrategy5AFactory("SMA", series, 7, 25, 100);
+        //var strategyFactory = new RsiStrategy1Factory("RSI", series);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);
@@ -38,16 +38,12 @@ public class StrategyAnalysisService
         var nProfitableTrades = calculateNumberOfProfitableTrades(trades);
         var nUnprofitableTrades = calculateNumberOfUnprofitableTrades(trades);
         var riskRewardRatio = nUnprofitableTrades / (double) nProfitableTrades;
-        var listOfNSignificantUps = getListOfNSignificantUps(trades);
-        var listOfNSignificantDowns = getListOfNSignificantDowns(trades);
         return StrategyAnalysisReport.builder()
                 .trades(tradesVisualisation)
                 .totalProfit(totalProfit)
                 .nProfitableTrades(nProfitableTrades)
                 .nUnprofitableTrades(nUnprofitableTrades)
                 .riskRewardRatio(riskRewardRatio)
-                .listOfNSignificantUps(listOfNSignificantUps)
-                .listOfNSignificantDowns(listOfNSignificantDowns)
                 .build();
     }
 
@@ -71,29 +67,5 @@ public class StrategyAnalysisService
         return trades.stream()
                 .filter(trade -> trade.getProfit().isNegative())
                 .count();
-    }
-
-    private List<Double> getListOfNSignificantUps(List<Trade> trades)
-    {
-        return trades.stream()
-                .map(Trade::getProfit)
-                .filter(Num::isPositive)
-                .mapToDouble(Num::doubleValue)
-                .boxed()
-                .sorted(Comparator.reverseOrder())
-                .limit(nSignificantTrades)
-                .collect(Collectors.toList());
-    }
-
-    private List<Double> getListOfNSignificantDowns(List<Trade> trades)
-    {
-        return trades.stream()
-                .map(Trade::getProfit)
-                .filter(Num::isNegative)
-                .mapToDouble(Num::doubleValue)
-                .sorted()
-                .limit(nSignificantTrades)
-                .boxed()
-                .collect(Collectors.toList());
     }
 }
