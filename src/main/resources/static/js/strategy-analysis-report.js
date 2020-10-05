@@ -27,5 +27,5 @@ function drawReport(report) {
 }
 
 function drawArray(array) {
-    return '[' + array.join('  |  ') + ']';
+    return '[  ' + array.join('  |  ') + '  ]';
 }

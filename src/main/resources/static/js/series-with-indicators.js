@@ -1,7 +1,7 @@
 var wrapperId = 'charts';
 //var priceChartType = 'line';
 var priceChartType = 'candlestick';
-var seriesSegmentSize = 100;
+var seriesSegmentSize = 150;
 
 var request = new XMLHttpRequest();
 request.open('GET', 'http://localhost:8881/api/series');

@@ -15,6 +15,8 @@ public class ApplicationConfiguration
     private static final int N_TICKS_BEFORE_TRADE = 40;
     private static final int N_TICKS_AFTER_TRADE = 20;
 
+    private static final int N_SIGNIFICANT_TRADES = 10;
+
     @Bean
     public BarProvider barProvider()
     {
@@ -32,7 +34,7 @@ public class ApplicationConfiguration
     public StrategyAnalysisService strategyAnalysisService(
             BarProvider barProvider, TradeVisualizationBuilder tradeVisualizationBuilder)
     {
-        return new StrategyAnalysisService(barProvider, tradeVisualizationBuilder);
+        return new StrategyAnalysisService(barProvider, tradeVisualizationBuilder, N_SIGNIFICANT_TRADES);
     }
 
     @Bean

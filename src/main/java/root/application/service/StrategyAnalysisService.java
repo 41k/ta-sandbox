@@ -9,32 +9,25 @@ import org.ta4j.core.num.PrecisionNum;
 import root.application.BarProvider;
 import root.application.TradeVisualizationBuilder;
 import root.application.model.StrategyAnalysisReport;
-import root.domain.strategy.doji.DojiStrategy1Factory;
-import root.domain.strategy.rsi_sma.RsiSmaStrategy1Factory;
-import root.domain.strategy.rsi_sma.RsiSmaStrategy2Factory;
-import root.domain.strategy.sma.SmaStrategy4Factory;
-import root.domain.strategy.sma.SmaStrategy5AFactory;
-import root.domain.strategy.sma.SmaStrategy5Factory;
-import root.domain.strategy.sma.StopLossStrategyTestFactory;
+import root.domain.strategy.rsi.RsiStrategy1Factory;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class StrategyAnalysisService
 {
     private final BarProvider barProvider;
     private final TradeVisualizationBuilder tradeVisualizationBuilder;
+    private final int nSignificantTrades;
 
     public StrategyAnalysisReport analyse()
     {
         var bars = barProvider.getMinuteBars();
         var series = new BaseBarSeries(bars);
-        var strategyFactory = new StopLossStrategyTestFactory("SMA", series, 7, 25, 100);
-        //var strategyFactory = new DojiStrategy1Factory("DOJI", series);
+        //var strategyFactory = new SmaStrategy5AFactory("SMA", series, 7, 25, 100);
+        var strategyFactory = new RsiStrategy1Factory("RSI", series);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);
@@ -88,7 +81,7 @@ public class StrategyAnalysisService
                 .mapToDouble(Num::doubleValue)
                 .boxed()
                 .sorted(Comparator.reverseOrder())
-                .limit(5)
+                .limit(nSignificantTrades)
                 .collect(Collectors.toList());
     }
 
@@ -99,7 +92,7 @@ public class StrategyAnalysisService
                 .filter(Num::isNegative)
                 .mapToDouble(Num::doubleValue)
                 .sorted()
-                .limit(5)
+                .limit(nSignificantTrades)
                 .boxed()
                 .collect(Collectors.toList());
     }
