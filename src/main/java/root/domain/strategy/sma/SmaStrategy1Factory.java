@@ -4,15 +4,8 @@ import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.trading.rules.BooleanIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
-import root.domain.indicator.bar.StrongBarIndicator;
-
-import java.util.Set;
-
-import static root.domain.indicator.bar.BarType.BEARISH;
-import static root.domain.indicator.bar.BarType.BULLISH;
 
 //    Given 3 SMA (short, medium, long), e.g.:
 //    * SMA(7) - shortSma,

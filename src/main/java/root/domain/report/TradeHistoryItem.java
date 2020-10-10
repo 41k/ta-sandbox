@@ -1,17 +1,22 @@
-package root.application.model;
+package root.domain.report;
 
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
 import java.util.List;
 
 @Value
 @Builder
-public class TradeVisualization
+public class TradeHistoryItem
 {
-    List<Tick> ticks;
+    @NonNull
     String strategyId;
+    @NonNull
     Long entryTimestamp;
+    @NonNull
     Long exitTimestamp;
+    @NonNull
     Double profit;
+    List<Tick> ticks;
 }

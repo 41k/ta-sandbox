@@ -1,4 +1,4 @@
-package root.application.model;
+package root.domain.report;
 
 import lombok.Builder;
 import lombok.NonNull;

@@ -5,7 +5,6 @@ import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.trading.rules.*;
-import root.domain.indicator.trend.UpTrendIndicator;
 
 //    Given 3 SMA (short, medium, long), e.g.:
 //    * SMA(7) - shortSma,

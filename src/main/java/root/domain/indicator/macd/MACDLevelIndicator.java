@@ -3,11 +3,11 @@ package root.domain.indicator.macd;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.indicators.helpers.ConstantIndicator;
 import org.ta4j.core.num.Num;
-import root.domain.indicator.Indicator;
+import root.domain.indicator.AdditionalChartNumIndicator;
 
 import static java.lang.String.format;
 
-public class MACDLevelIndicator extends ConstantIndicator<Num> implements Indicator<Num>
+public class MACDLevelIndicator extends ConstantIndicator<Num> implements AdditionalChartNumIndicator
 {
     private static final String MACD_LEVEL_INDICATOR_NAME_FORMAT = "MACD-level(%.0f)";
 

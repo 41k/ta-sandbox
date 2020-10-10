@@ -9,7 +9,6 @@ import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import root.domain.indicator.bar.StrongBarIndicator;
 import root.domain.indicator.trend.DownTrendIndicator;
-import root.domain.indicator.trend.UpTrendIndicator;
 
 import java.util.Set;
 

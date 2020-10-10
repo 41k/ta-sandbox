@@ -1,11 +1,11 @@
 package root.domain.indicator.macd;
 
 import org.ta4j.core.num.Num;
-import root.domain.indicator.Indicator;
+import root.domain.indicator.AdditionalChartNumIndicator;
 
 import static java.lang.String.format;
 
-public class MACDIndicator extends org.ta4j.core.indicators.MACDIndicator implements Indicator<Num>
+public class MACDIndicator extends org.ta4j.core.indicators.MACDIndicator implements AdditionalChartNumIndicator
 {
     private static final String MACD_INDICATOR_NAME_FORMAT = "MACD(%d, %d)";
 

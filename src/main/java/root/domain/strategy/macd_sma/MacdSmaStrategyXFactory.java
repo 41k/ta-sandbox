@@ -8,17 +8,13 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import root.domain.indicator.Indicator;
-import root.domain.indicator.OBVIndicator;
 import root.domain.indicator.SMAIndicator;
 import root.domain.indicator.macd.MACDIndicator;
 import root.domain.indicator.macd.MACDLevelIndicator;
 import root.domain.indicator.macd.MACDSignalLineIndicator;
 import root.domain.strategy.AbstractStrategyFactory;
-import root.domain.strategy.sma.AbstractSmaStrategyFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MacdSmaStrategyXFactory extends AbstractStrategyFactory

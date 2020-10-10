@@ -1,52 +1,29 @@
-package root.application;
+package root.domain.report;
 
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Trade;
 import org.ta4j.core.num.Num;
-import root.application.model.Tick;
-import root.application.model.TradeVisualization;
-import root.domain.indicator.EMAIndicator;
+import root.domain.indicator.AdditionalChartNumIndicator;
 import root.domain.indicator.Indicator;
-import root.domain.indicator.OBVIndicator;
-import root.domain.indicator.SMAIndicator;
-import root.domain.indicator.macd.MACDIndicator;
-import root.domain.indicator.macd.MACDLevelIndicator;
-import root.domain.indicator.macd.MACDSignalLineIndicator;
-import root.domain.indicator.rsi.RSIIndicator;
-import root.domain.indicator.rsi.RSILevelIndicator;
+import root.domain.indicator.MainChartNumIndicator;
 import root.domain.level.Level;
 import root.domain.strategy.StrategyFactory;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
-public class TradeVisualizationBuilder
+public class TradeHistoryItemBuilder
 {
-    private static final HashSet<Class<? extends Indicator<Num>>> MAIN_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
-            SMAIndicator.class, EMAIndicator.class
-    ));
-    private static final HashSet<Class<? extends Indicator<Num>>> ADDITIONAL_CHART_NUM_INDICATOR_TYPES = new HashSet<>(List.of(
-            RSIIndicator.class, RSILevelIndicator.class,
-            MACDIndicator.class, MACDSignalLineIndicator.class, MACDLevelIndicator.class,
-            OBVIndicator.class
-    ));
+    private static final int DEFAULT_N_TICKS_BEFORE_TRADE = 20;
+    private static final int DEFAULT_N_TICKS_AFTER_TRADE = 20;
 
-    private final int nTicksBeforeTrade;
-    private final int nTicksAfterTrade;
-
-    public List<TradeVisualization> build(List<Trade> trades, BarSeries series, StrategyFactory strategyFactory)
-    {
-        return trades.stream()
-                .map(trade -> buildTradeVisualization(trade, series, strategyFactory))
-                .collect(toList());
-    }
-
-    private TradeVisualization buildTradeVisualization(Trade trade, BarSeries series, StrategyFactory strategyFactory)
+    public TradeHistoryItem build(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {
         var ticksBeforeTrade = getTicksBeforeTrade(trade, series, strategyFactory);
         var ticksDuringTrade = getTicksDuringTrade(trade, series, strategyFactory);
@@ -56,7 +33,7 @@ public class TradeVisualizationBuilder
                 .collect(toList());
         var entryTimestamp = getEntryTimestamp(ticksDuringTrade);
         var exitTimestamp = getExitTimestamp(ticksDuringTrade);
-        return TradeVisualization.builder()
+        return TradeHistoryItem.builder()
                 .ticks(ticks)
                 .strategyId(strategyFactory.getStrategyId())
                 .entryTimestamp(entryTimestamp)
@@ -75,6 +52,7 @@ public class TradeVisualizationBuilder
         }
         var ticks = new ArrayList<Tick>();
         var bars = series.getBarData();
+        var nTicksBeforeTrade = strategyFactory.getUnstablePeriodLength().orElse(DEFAULT_N_TICKS_BEFORE_TRADE);
         var startIndex = Math.max(0, entryOrderIndex - nTicksBeforeTrade - 1);
         for (int i = startIndex; i < entryOrderIndex; i++)
         {
@@ -95,7 +73,7 @@ public class TradeVisualizationBuilder
         var ticks = new ArrayList<Tick>();
         var bars = series.getBarData();
         var startIndex = exitOrderIndex + 1;
-        var endIndex = Math.min(exitOrderIndex + nTicksAfterTrade + 1, seriesEndIndex);
+        var endIndex = Math.min(exitOrderIndex + DEFAULT_N_TICKS_AFTER_TRADE + 1, seriesEndIndex);
         for (int i = startIndex; i <= endIndex; i++)
         {
             var tick = getTickBuilder(i, bars, strategyFactory).build();
@@ -107,11 +85,11 @@ public class TradeVisualizationBuilder
     private List<Tick> getTicksDuringTrade(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {
         var ticks = new ArrayList<Tick>();
+        var bars = series.getBarData();
         var entryOrder = trade.getEntry();
         var exitOrder = trade.getExit();
         var entryOrderIndex = entryOrder.getIndex();
         var exitOrderIndex = exitOrder.getIndex();
-        var bars = series.getBarData();
         for (int i = entryOrderIndex; i <= exitOrderIndex; i++)
         {
             var tickBuilder = getTickBuilder(i, bars, strategyFactory);
@@ -155,22 +133,22 @@ public class TradeVisualizationBuilder
 
     private Map<String, Double> getMainChartNumIndicators(int index, StrategyFactory strategyFactory)
     {
-        return getNumberIndicators(index, strategyFactory, MAIN_CHART_NUM_INDICATOR_TYPES);
+        Predicate<Indicator<Num>> predicate = indicator -> indicator instanceof MainChartNumIndicator;
+        return getNumberIndicators(index, strategyFactory, predicate);
     }
 
     private Map<String, Double> getAdditionalChartNumIndicators(int index, StrategyFactory strategyFactory)
     {
-        return getNumberIndicators(index, strategyFactory, ADDITIONAL_CHART_NUM_INDICATOR_TYPES);
+        Predicate<Indicator<Num>> predicate = indicator -> indicator instanceof AdditionalChartNumIndicator;
+        return getNumberIndicators(index, strategyFactory, predicate);
     }
 
-    private Map<String, Double> getNumberIndicators(int index,
-                                              StrategyFactory strategyFactory,
-                                              HashSet<Class<? extends Indicator<Num>>> indicatorTypes)
+    private Map<String, Double> getNumberIndicators(int index, StrategyFactory strategyFactory, Predicate<Indicator<Num>> predicate)
     {
         var indicatorNameToValueMap = new LinkedHashMap<String, Double>();
         strategyFactory.getNumIndicators()
                 .stream()
-                .filter(indicator -> indicatorTypes.contains(indicator.getClass()))
+                .filter(predicate)
                 .forEach(indicator -> {
                     var indicatorName = indicator.getName();
                     var indicatorValue = getIndicatorValue(indicator, index);

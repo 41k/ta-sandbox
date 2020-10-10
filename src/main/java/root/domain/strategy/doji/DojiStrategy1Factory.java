@@ -10,11 +10,8 @@ import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.BooleanIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
-import org.ta4j.core.trading.rules.UnderIndicatorRule;
-import root.domain.indicator.EMAIndicator;
 import root.domain.indicator.Indicator;
 import root.domain.indicator.SMAIndicator;
-import root.domain.indicator.bar.BarType;
 import root.domain.indicator.bar.BarTypeIndicator;
 import root.domain.strategy.AbstractStrategyFactory;
 

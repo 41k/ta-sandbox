@@ -1,50 +1,40 @@
-package root.application.service;
+package root.domain.report;
 
-import lombok.RequiredArgsConstructor;
-import org.ta4j.core.BarSeriesManager;
-import org.ta4j.core.BaseBarSeries;
+import org.ta4j.core.BarSeries;
 import org.ta4j.core.Trade;
 import org.ta4j.core.num.Num;
 import org.ta4j.core.num.PrecisionNum;
-import root.application.BarProvider;
-import root.application.TradeVisualizationBuilder;
-import root.application.model.StrategyAnalysisReport;
-import root.domain.strategy.rsi.RsiStrategy1Factory;
-import root.domain.strategy.sma.SmaStrategy5AFactory;
+import root.domain.strategy.StrategyFactory;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
-public class StrategyAnalysisService
+import static java.util.stream.Collectors.toList;
+
+public class StrategyAnalysisReportBuilder
 {
-    private final BarProvider barProvider;
-    private final TradeVisualizationBuilder tradeVisualizationBuilder;
-
-    public StrategyAnalysisReport analyse()
+    public StrategyAnalysisReport build(List<Trade> trades, BarSeries series, StrategyFactory strategyFactory)
     {
-        var bars = barProvider.getMinuteBars();
-        var series = new BaseBarSeries(bars);
-        var strategyFactory = new SmaStrategy5AFactory("SMA", series, 7, 25, 100);
-        //var strategyFactory = new RsiStrategy1Factory("RSI", series);
-        var strategy = strategyFactory.create();
-        var seriesManager = new BarSeriesManager(series);
-        var tradingRecord = seriesManager.run(strategy);
-        var trades = tradingRecord.getTrades();
-
-        var tradesVisualisation = tradeVisualizationBuilder.build(trades, series, strategyFactory);
         var totalProfit = calculateTotalProfit(trades);
         var nProfitableTrades = calculateNumberOfProfitableTrades(trades);
         var nUnprofitableTrades = calculateNumberOfUnprofitableTrades(trades);
         var riskRewardRatio = nUnprofitableTrades / (double) nProfitableTrades;
+        var tradeHistoryItems = buildTradeHistoryItems(trades, series, strategyFactory);
         return StrategyAnalysisReport.builder()
-                .trades(tradesVisualisation)
+                .strategyId(strategyFactory.getStrategyId())
                 .totalProfit(totalProfit)
                 .nProfitableTrades(nProfitableTrades)
                 .nUnprofitableTrades(nUnprofitableTrades)
                 .riskRewardRatio(riskRewardRatio)
+                .trades(tradeHistoryItems)
                 .build();
+    }
+
+    private List<TradeHistoryItem> buildTradeHistoryItems(List<Trade> trades, BarSeries series, StrategyFactory strategyFactory)
+    {
+        var tradeHistoryItemBuilder = new TradeHistoryItemBuilder();
+        return trades.stream()
+                .map(trade -> tradeHistoryItemBuilder.build(trade, series, strategyFactory))
+                .collect(toList());
     }
 
     private Double calculateTotalProfit(List<Trade> trades)

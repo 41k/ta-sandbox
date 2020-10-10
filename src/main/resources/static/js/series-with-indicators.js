@@ -1,7 +1,7 @@
 var wrapperId = 'charts';
 //var priceChartType = 'line';
 var priceChartType = 'candlestick';
-var chartRenderer = new ChartRenderer(priceChartType);
+var chartRenderer = new TickSeriesChartRenderer(priceChartType);
 var seriesSegmentSize = 150;
 
 var request = new XMLHttpRequest();

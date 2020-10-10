@@ -1,11 +1,11 @@
 package root.domain.indicator.rsi;
 
 import org.ta4j.core.num.Num;
-import root.domain.indicator.Indicator;
+import root.domain.indicator.AdditionalChartNumIndicator;
 
 import static java.lang.String.format;
 
-public class RSIIndicator extends org.ta4j.core.indicators.RSIIndicator implements Indicator<Num>
+public class RSIIndicator extends org.ta4j.core.indicators.RSIIndicator implements AdditionalChartNumIndicator
 {
     private static final String RSI_INDICATOR_NAME_FORMAT = "RSI(%d)";
 

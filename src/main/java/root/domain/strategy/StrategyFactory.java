@@ -14,6 +14,11 @@ public interface StrategyFactory
 
     String getStrategyId();
 
+    default Optional<Integer> getUnstablePeriodLength()
+    {
+        return Optional.empty();
+    }
+
     default List<Indicator<Num>> getNumIndicators()
     {
         return List.of();

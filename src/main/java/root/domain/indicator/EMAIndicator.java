@@ -4,7 +4,7 @@ import org.ta4j.core.num.Num;
 
 import static java.lang.String.format;
 
-public class EMAIndicator extends org.ta4j.core.indicators.EMAIndicator implements Indicator<Num>
+public class EMAIndicator extends org.ta4j.core.indicators.EMAIndicator implements MainChartNumIndicator
 {
     private static final String EMA_INDICATOR_NAME_FORMAT = "EMA(%d)";
 

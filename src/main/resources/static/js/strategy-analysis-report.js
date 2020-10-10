@@ -4,11 +4,11 @@ var tradeVisualizationPopupId = 'trade-visualization-popup';
 var tradeVisualizationWrapperId = 'trade-visualization';
 //var priceChartType = 'line';
 var priceChartType = 'candlestick';
-var chartRenderer = new ChartRenderer(priceChartType);
+var chartRenderer = new TickSeriesChartRenderer(priceChartType);
 var tradesStore = {};
 
 var request = new XMLHttpRequest();
-request.open('GET', 'http://localhost:8881/api/strategy/analysis-report');
+request.open('GET', 'http://localhost:8881/api/strategy-analysis-report');
 request.onreadystatechange = () => { if (request.readyState === 4) processResponse() };
 request.send();
 
@@ -34,11 +34,12 @@ function formTradeId(trade) {
 }
 
 function drawReport(report) {
-    document.getElementById('total-profit').textContent = report.totalProfit;
-    document.getElementById('n-trades').textContent = report.trades.length;
-    document.getElementById('n-up-trades').textContent = report.nprofitableTrades;
-    document.getElementById('n-down-trades').textContent = report.nunprofitableTrades;
-    document.getElementById('risk-reward-ratio').textContent = report.riskRewardRatio;
+    document.getElementById('strategy-id').innerHTML = report.strategyId;
+    document.getElementById('total-profit').innerHTML = report.totalProfit;
+    document.getElementById('n-trades').innerHTML = report.trades.length;
+    document.getElementById('n-up-trades').innerHTML = report.nprofitableTrades;
+    document.getElementById('n-down-trades').innerHTML = report.nunprofitableTrades;
+    document.getElementById('risk-reward-ratio').innerHTML = report.riskRewardRatio.toFixed(2);
 }
 
 function drawTradesTable(trades) {

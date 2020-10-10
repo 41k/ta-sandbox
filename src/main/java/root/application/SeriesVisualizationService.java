@@ -1,4 +1,4 @@
-package root.application.service;
+package root.application;
 
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.BaseBarSeries;
@@ -6,7 +6,7 @@ import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
 import root.application.BarProvider;
-import root.application.model.Tick;
+import root.domain.report.Tick;
 import root.domain.indicator.macd.MACDIndicator;
 import root.domain.indicator.macd.MACDLevelIndicator;
 import root.domain.indicator.macd.MACDSignalLineIndicator;

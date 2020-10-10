@@ -1,6 +1,7 @@
-package root.application.model;
+package root.domain.report;
 
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
 import java.util.List;
@@ -9,9 +10,16 @@ import java.util.List;
 @Builder
 public class StrategyAnalysisReport
 {
-    List<TradeVisualization> trades;
+    @NonNull
+    String strategyId;
+    @NonNull
     Double totalProfit;
+    @NonNull
     Long nProfitableTrades;
+    @NonNull
     Long nUnprofitableTrades;
+    @NonNull
     Double riskRewardRatio;
+    @NonNull
+    List<TradeHistoryItem> trades;
 }

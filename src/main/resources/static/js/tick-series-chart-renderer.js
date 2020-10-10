@@ -1,4 +1,4 @@
-function ChartRenderer(priceChartType) {
+function TickSeriesChartRenderer(priceChartType) {
 
     var priceChartType = priceChartType;
     var dateTimeFormat = 'yyyy-mm-dd HH:MM:ss';

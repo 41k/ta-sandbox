@@ -4,7 +4,7 @@ import org.ta4j.core.num.Num;
 
 import static java.lang.String.format;
 
-public class SMAIndicator extends org.ta4j.core.indicators.SMAIndicator implements Indicator<Num>
+public class SMAIndicator extends org.ta4j.core.indicators.SMAIndicator implements MainChartNumIndicator
 {
     private static final String SMA_INDICATOR_NAME_FORMAT = "SMA(%d)";
 
