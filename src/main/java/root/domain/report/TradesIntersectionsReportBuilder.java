@@ -1,4 +1,4 @@
-package root.domain.analysis;
+package root.domain.report;
 
 import java.util.*;
 

@@ -2,8 +2,8 @@ package root.application;
 
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.BaseBarSeries;
-import root.domain.analysis.StrategiesGroupAnalysisReport;
-import root.domain.analysis.StrategiesGroupAnalysisReportBuilder;
+import root.domain.report.StrategiesGroupAnalysisReport;
+import root.domain.report.StrategiesGroupAnalysisReportBuilder;
 import root.domain.strategy.StrategyFactory;
 import root.domain.strategy.rsi.RsiStrategy1Factory;
 import root.domain.strategy.sma.SmaStrategy3CFactory;

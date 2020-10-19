@@ -1,4 +1,4 @@
-package root.domain.analysis;
+package root.domain.report;
 
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.Bar;

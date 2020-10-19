@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import root.domain.analysis.StrategiesGroupAnalysisReport;
+import root.domain.report.StrategiesGroupAnalysisReport;
 import root.application.SeriesVisualizationService;
-import root.domain.analysis.StrategyAnalysisReport;
+import root.domain.report.StrategyAnalysisReport;
 import root.application.StrategiesGroupAnalysisService;
 import root.application.StrategyAnalysisService;
-import root.domain.analysis.Tick;
+import root.domain.report.Tick;
 
 import java.util.List;
 

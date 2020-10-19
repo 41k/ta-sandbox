@@ -3,8 +3,8 @@ package root.application;
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.BarSeriesManager;
 import org.ta4j.core.BaseBarSeries;
-import root.domain.analysis.StrategyAnalysisReportBuilder;
-import root.domain.analysis.StrategyAnalysisReport;
+import root.domain.report.StrategyAnalysisReportBuilder;
+import root.domain.report.StrategyAnalysisReport;
 import root.domain.strategy.macd.MacdStrategy1Factory;
 
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package root.domain.analysis;
+package root.domain.report;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Trade;
