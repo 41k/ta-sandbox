@@ -40,7 +40,7 @@ public class SeriesVisualizationService
 
     public List<Tick> getSeries()
     {
-        var bars = barProvider.getMinuteBars();
+        var bars = barProvider.getBars();
         var series = new BaseBarSeries(bars);
         var closePriceIndicator = new ClosePriceIndicator(series);
 

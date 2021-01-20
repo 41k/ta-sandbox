@@ -1,4 +1,4 @@
-package root.infrastructure;
+package root.infrastructure.bar_provider;
 
 import com.opencsv.CSVReader;
 import lombok.extern.slf4j.Slf4j;
@@ -20,17 +20,13 @@ import java.util.List;
 @Slf4j
 public class CsvBarProvider implements BarProvider
 {
-    @Override
-    public List<Bar> getMinuteBars()
-    {
-        return getMinuteBars("data/ohlcvt-1m-1.csv");
-    }
+    private static final String FILE_PATH = "data/ohlcvt-1m-1.csv";
 
     @Override
-    public List<Bar> getMinuteBars(String filename)
+    public List<Bar> getBars()
     {
         List<Bar> bars = new ArrayList<>();
-        InputStream stream = CsvBarProvider.class.getClassLoader().getResourceAsStream(filename);
+        InputStream stream = CsvBarProvider.class.getClassLoader().getResourceAsStream(FILE_PATH);
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(stream, StandardCharsets.UTF_8), ',', '"', 0))
         {
             String[] line;

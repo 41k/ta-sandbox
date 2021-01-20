@@ -19,7 +19,7 @@ public class StrategiesGroupAnalysisService
 
     public StrategiesGroupAnalysisReport analyse()
     {
-        var bars = barProvider.getMinuteBars();
+        var bars = barProvider.getBars();
         var series = new BaseBarSeries(bars);
         var strategiesFactories = List.<StrategyFactory>of(
                 new RsiStrategy1Factory("RSI", series),
