@@ -15,6 +15,7 @@ public class StrategyAnalysisReportBuilder
     public StrategyAnalysisReport build(List<Trade> trades, BarSeries series, StrategyFactory strategyFactory)
     {
         var totalProfit = calculateTotalProfit(trades);
+        var averageProfitPerTrade = totalProfit / trades.size();
         var nProfitableTrades = calculateNumberOfProfitableTrades(trades);
         var nUnprofitableTrades = calculateNumberOfUnprofitableTrades(trades);
         var riskRewardRatio = nUnprofitableTrades / (double) nProfitableTrades;
@@ -22,6 +23,7 @@ public class StrategyAnalysisReportBuilder
         return StrategyAnalysisReport.builder()
                 .strategyId(strategyFactory.getStrategyId())
                 .totalProfit(totalProfit)
+                .averageProfitPerTrade(averageProfitPerTrade)
                 .nProfitableTrades(nProfitableTrades)
                 .nUnprofitableTrades(nUnprofitableTrades)
                 .riskRewardRatio(riskRewardRatio)

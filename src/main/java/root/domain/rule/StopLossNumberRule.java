@@ -1,13 +1,13 @@
 package root.domain.rule;
 
 import org.ta4j.core.Order;
+import org.ta4j.core.Rule;
 import org.ta4j.core.Trade;
 import org.ta4j.core.TradingRecord;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.num.Num;
-import org.ta4j.core.trading.rules.AbstractRule;
 
-public class StopLossNumberRule extends AbstractRule
+public class StopLossNumberRule  implements Rule
 {
     private final ClosePriceIndicator closePrice;
     private final Num lossNumber;

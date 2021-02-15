@@ -3,7 +3,7 @@ function TickSeriesChartRenderer(priceChartType) {
     var priceChartType = priceChartType;
     var dateTimeFormat = 'yyyy-mm-dd HH:MM:ss';
     var timeFormat = 'HH:MM:ss';
-    var additionalChartIndicatorTypes = ['RSI', 'MACD', 'OBV'];
+    var additionalChartIndicatorTypes = ['ADX', 'RSI', 'MACD', 'OBV', 'WR'];
 
     this.renderTickSeries = function(tickSeries, seriesSegmentSize, wrapperId) {
         var tickSeriesSegments = formSeriesSegments(tickSeries, seriesSegmentSize);
@@ -100,6 +100,11 @@ function TickSeriesChartRenderer(priceChartType) {
                 type: 'line',
                 toolbar: {
                     show: false
+                },
+                events: {
+                    markerClick: function(event, chartContext, { seriesIndex, dataPointIndex, config}) {
+                        logBarParams(chartContext, seriesIndex, dataPointIndex);
+                    }
                 }
             },
             title: {
@@ -113,7 +118,7 @@ function TickSeriesChartRenderer(priceChartType) {
                 tooltip: {
                     enabled: true,
                     offsetY: 40,
-                    formatter: (timestamp) => formDateTimeString(timestamp, timeFormat)
+                    formatter: (timestamp) => timestamp
                 },
                 type: 'datetime',
             },
@@ -130,8 +135,28 @@ function TickSeriesChartRenderer(priceChartType) {
                         downward: '#ed5565'
                     }
                 }
+            },
+            tooltip: {
+                x: {
+                    show: true,
+                    format: 'yyyy-MM-dd HH:mm'
+                }
             }
         };
+    }
+
+    var logBarParams = function(chartContext, seriesIndex, dataPointIndex) {
+        var ohlc = chartContext.opts.series[seriesIndex].data[dataPointIndex].y;
+        var openPrice = ohlc[0];
+        var highPrice = ohlc[1];
+        var lowPrice = ohlc[2];
+        var closePrice = ohlc[3];
+        var isBullishBar = closePrice > openPrice;
+        var bodySize = (isBullishBar ? (closePrice - openPrice) : (openPrice - closePrice)).toFixed(2);
+        var lowerShadowSize = (isBullishBar ? (openPrice - lowPrice) : (closePrice - lowPrice)).toFixed(2);
+        var upperShadowSize = (isBullishBar ? (highPrice - closePrice) : (highPrice - openPrice)).toFixed(2);
+        var message = 'body: ' + bodySize + ' -- lower shadow: ' + lowerShadowSize + ' -- upper shadow: ' + upperShadowSize;
+        console.log(message);
     }
 
     var addLineIndicators = function(options, ticks) {

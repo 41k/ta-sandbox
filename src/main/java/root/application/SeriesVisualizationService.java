@@ -4,9 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.ta4j.core.BaseBarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.Num;
 import root.application.BarProvider;
+import root.domain.indicator.EMAIndicator;
+import root.domain.indicator.SARIndicator;
+import root.domain.indicator.adx.ADXIndicator;
+import root.domain.indicator.adx.ADXLevelIndicator;
+import root.domain.indicator.bollinger.BBLowerIndicator;
+import root.domain.indicator.bollinger.BBMiddleIndicator;
+import root.domain.indicator.bollinger.BBUpperIndicator;
 import root.domain.indicator.macd.MACDDifferenceIndicator;
+import root.domain.indicator.wri.WRIndicator;
+import root.domain.indicator.wri.WRLevelIndicator;
 import root.domain.report.Tick;
 import root.domain.indicator.macd.MACDIndicator;
 import root.domain.indicator.macd.MACDLevelIndicator;
@@ -22,20 +32,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SeriesVisualizationService
 {
-    private static final String SHORT_SMA_INDICATOR = "SMA(7)";
-    private static final String MEDIUM_SMA_INDICATOR = "SMA(25)";
-    private static final String LONG_SMA_INDICATOR = "SMA(100)";
-
-    private static final String RSI_INDICATOR = "RSI(12)";
-    private static final String RSI_LEVEL_70_INDICATOR = "RSI-level(70)";
-    private static final String RSI_LEVEL_50_INDICATOR = "RSI-level(50)";
-    private static final String RSI_LEVEL_30_INDICATOR = "RSI-level(30)";
-
-    private static final String MACD_INDICATOR = "MACD(12, 26)";
-    private static final String MACD_SIGNAL_LINE_INDICATOR = "MACD-signal(9)";
-    private static final String MACD_DIFFERENCE_INDICATOR = "MACD-diff";
-    private static final String MACD_LEVEL_0_INDICATOR = "MACD-level(0)";
-
     private final BarProvider barProvider;
 
     public List<Tick> getSeries()
@@ -47,6 +43,13 @@ public class SeriesVisualizationService
         var longSmaIndicator = new SMAIndicator(closePriceIndicator, 100);
         var mediumSmaIndicator = new SMAIndicator(closePriceIndicator, 25);
         var shortSmaIndicator = new SMAIndicator(closePriceIndicator, 7);
+        var sma = new SMAIndicator(closePriceIndicator, 1000);
+
+        var ema7Indicator = new EMAIndicator(closePriceIndicator, 7);
+        var ema25Indicator = new EMAIndicator(closePriceIndicator, 25);
+        var ema100Indicator = new EMAIndicator(closePriceIndicator, 100);
+        var ema20Indicator = new EMAIndicator(closePriceIndicator, 20);
+        var ema50Indicator = new EMAIndicator(closePriceIndicator, 50);
 
         var rsiIndicator = new RSIIndicator(closePriceIndicator, 12);
         var rsiLevel70Indicator = new RSILevelIndicator(series, series.numOf(70));
@@ -58,23 +61,54 @@ public class SeriesVisualizationService
         var macdDifferenceIndicator = new MACDDifferenceIndicator(macdIndicator, macdSignalLineIndicator);
         var macdLevel0Indicator = new MACDLevelIndicator(series, series.numOf(0));
 
+        var sarIndicator = new SARIndicator(series);
+
+        var wrIndicator = new WRIndicator(series, 40);
+        var wrLevelMinus10 = new WRLevelIndicator(series, series.numOf(-10));
+        var wrLevelMinus90 = new WRLevelIndicator(series, series.numOf(-90));
+
+        var adx = new ADXIndicator(series, 14, 14);
+        var adxLevel30 = new ADXLevelIndicator(series, series.numOf(30));
+
+        var periodLength = 20;
+        var bbm = new BBMiddleIndicator(new SMAIndicator(closePriceIndicator, periodLength));
+        var standardDeviation = new StandardDeviationIndicator(closePriceIndicator, periodLength);
+        var bbu = new BBUpperIndicator(bbm, standardDeviation, series.numOf(2));
+        var bbl = new BBLowerIndicator(bbm, standardDeviation, series.numOf(2));
+
         var seriesVisualization = new ArrayList<Tick>();
         for (int i = series.getBeginIndex(); i <= series.getEndIndex(); i++)
         {
             var mainChartNumIndicators = new LinkedHashMap<String, Double>();
-//            mainChartNumIndicators.put(SHORT_SMA_INDICATOR, getIndicatorValue(shortSmaIndicator, i));
-//            mainChartNumIndicators.put(MEDIUM_SMA_INDICATOR, getIndicatorValue(mediumSmaIndicator, i));
-//            mainChartNumIndicators.put(LONG_SMA_INDICATOR, getIndicatorValue(longSmaIndicator, i));
+            mainChartNumIndicators.put(bbu.getName(), getIndicatorValue(bbu, i));
+            mainChartNumIndicators.put(bbm.getName(), getIndicatorValue(bbm, i));
+            mainChartNumIndicators.put(bbl.getName(), getIndicatorValue(bbl, i));
+//            mainChartNumIndicators.put(sma.getName(), getIndicatorValue(sma, i));
+//            mainChartNumIndicators.put(shortSmaIndicator.getName(), getIndicatorValue(shortSmaIndicator, i));
+//            mainChartNumIndicators.put(mediumSmaIndicator.getName(), getIndicatorValue(mediumSmaIndicator, i));
+//            mainChartNumIndicators.put(longSmaIndicator.getName(), getIndicatorValue(longSmaIndicator, i));
+//            mainChartNumIndicators.put(ema20Indicator.getName(), getIndicatorValue(ema20Indicator, i));
+//            mainChartNumIndicators.put(ema50Indicator.getName(), getIndicatorValue(ema50Indicator, i));
+//            mainChartNumIndicators.put(ema25Indicator.getName(), getIndicatorValue(ema25Indicator, i));
+//            mainChartNumIndicators.put(sarIndicator.getName(), getIndicatorValue(sarIndicator, i));
+//            mainChartNumIndicators.put(ema7Indicator.getName(), getIndicatorValue(ema7Indicator, i));
+//            mainChartNumIndicators.put(ema25Indicator.getName(), getIndicatorValue(ema25Indicator, i));
+//            mainChartNumIndicators.put(ema100Indicator.getName(), getIndicatorValue(ema100Indicator, i));
 
             var additionalChartNumIndicators = new LinkedHashMap<String, Double>();
-//            additionalChartNumIndicators.put(RSI_INDICATOR, getIndicatorValue(rsiIndicator, i));
-//            additionalChartNumIndicators.put(RSI_LEVEL_70_INDICATOR, getIndicatorValue(rsiLevel70Indicator, i));
-//            additionalChartNumIndicators.put(RSI_LEVEL_50_INDICATOR, getIndicatorValue(rsiLevel50Indicator, i));
-//            additionalChartNumIndicators.put(RSI_LEVEL_30_INDICATOR, getIndicatorValue(rsiLevel30Indicator, i));
-            additionalChartNumIndicators.put(MACD_INDICATOR, getIndicatorValue(macdIndicator, i));
-            additionalChartNumIndicators.put(MACD_SIGNAL_LINE_INDICATOR, getIndicatorValue(macdSignalLineIndicator, i));
-            additionalChartNumIndicators.put(MACD_DIFFERENCE_INDICATOR, getIndicatorValue(macdDifferenceIndicator, i));
-            additionalChartNumIndicators.put(MACD_LEVEL_0_INDICATOR, getIndicatorValue(macdLevel0Indicator, i));
+//            additionalChartNumIndicators.put(rsiIndicator.getName(), getIndicatorValue(rsiIndicator, i));
+//            additionalChartNumIndicators.put(rsiLevel70Indicator.getName(), getIndicatorValue(rsiLevel70Indicator, i));
+//            additionalChartNumIndicators.put(rsiLevel50Indicator.getName(), getIndicatorValue(rsiLevel50Indicator, i));
+//            additionalChartNumIndicators.put(rsiLevel30Indicator.getName(), getIndicatorValue(rsiLevel30Indicator, i));
+//            additionalChartNumIndicators.put(macdIndicator.getName(), getIndicatorValue(macdIndicator, i));
+//            additionalChartNumIndicators.put(macdSignalLineIndicator.getName(), getIndicatorValue(macdSignalLineIndicator, i));
+//            additionalChartNumIndicators.put(macdDifferenceIndicator.getName(), getIndicatorValue(macdDifferenceIndicator, i));
+//            additionalChartNumIndicators.put(macdLevel0Indicator.getName(), getIndicatorValue(macdLevel0Indicator, i));
+//            additionalChartNumIndicators.put(wrIndicator.getName(), getIndicatorValue(wrIndicator, i));
+//            additionalChartNumIndicators.put(wrLevelMinus10.getName(), getIndicatorValue(wrLevelMinus10, i));
+//            additionalChartNumIndicators.put(wrLevelMinus90.getName(), getIndicatorValue(wrLevelMinus90, i));
+//            additionalChartNumIndicators.put(adx.getName(), getIndicatorValue(adx, i));
+//            additionalChartNumIndicators.put(adxLevel30.getName(), getIndicatorValue(adxLevel30, i));
 
             var bar = series.getBar(i);
             var tick = Tick.builder()

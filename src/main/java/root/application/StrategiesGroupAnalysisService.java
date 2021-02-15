@@ -5,6 +5,10 @@ import org.ta4j.core.BaseBarSeries;
 import root.domain.report.StrategiesGroupAnalysisReport;
 import root.domain.report.StrategiesGroupAnalysisReportBuilder;
 import root.domain.strategy.StrategyFactory;
+import root.domain.strategy.ready.ETHUSD_5m_DownTrend_Strategy1Factory;
+import root.domain.strategy.ready.ETHUSD_5m_UpTrend_Strategy1Factory;
+import root.domain.strategy.ready.SMA3_DownTrend_Strategy1Factory;
+import root.domain.strategy.ready.SMA3_UpTrend_Strategy1Factory;
 import root.domain.strategy.rsi.RsiStrategy1Factory;
 import root.domain.strategy.sma.SmaStrategy3CFactory;
 import root.domain.strategy.sma.SmaStrategy5AFactory;
@@ -22,9 +26,8 @@ public class StrategiesGroupAnalysisService
         var bars = barProvider.getBars();
         var series = new BaseBarSeries(bars);
         var strategiesFactories = List.<StrategyFactory>of(
-                new RsiStrategy1Factory("RSI", series),
-                new SmaStrategy3CFactory("SMA-3C", series, 7, 25, 100),
-                new SmaStrategy5AFactory("SMA-5A", series, 7, 25, 100)
+                new ETHUSD_5m_UpTrend_Strategy1Factory("UP-TREND", series),
+                new ETHUSD_5m_DownTrend_Strategy1Factory("DOWN-TREND", series)
         );
         var strategiesGroupExecutionResult = new SequentialStrategiesGroupExecutor().execute(strategiesFactories, series);
         return new StrategiesGroupAnalysisReportBuilder().build(strategiesGroupExecutionResult, series);

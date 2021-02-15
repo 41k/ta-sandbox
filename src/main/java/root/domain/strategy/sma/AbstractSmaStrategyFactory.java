@@ -19,7 +19,7 @@ public abstract class AbstractSmaStrategyFactory extends AbstractStrategyFactory
     protected final SMAIndicator longSmaIndicator;
     protected final List<Indicator<Num>> numIndicators = new ArrayList<>();
 
-    AbstractSmaStrategyFactory(String strategyId, BarSeries series, int shortSmaLength, int mediumSmaLength, int longSmaLength)
+    public AbstractSmaStrategyFactory(String strategyId, BarSeries series, int shortSmaLength, int mediumSmaLength, int longSmaLength)
     {
         super(strategyId, series);
         checkInput(shortSmaLength, mediumSmaLength, longSmaLength);

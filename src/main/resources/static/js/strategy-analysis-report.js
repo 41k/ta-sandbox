@@ -36,6 +36,7 @@ function formTradeId(trade) {
 function drawReport(report) {
     document.getElementById('strategy-id').innerHTML = report.strategyId;
     document.getElementById('total-profit').innerHTML = report.totalProfit;
+    document.getElementById('avg-profit-per-trade').innerHTML = report.averageProfitPerTrade;
     document.getElementById('n-trades').innerHTML = report.trades.length;
     document.getElementById('n-up-trades').innerHTML = report.nprofitableTrades;
     document.getElementById('n-down-trades').innerHTML = report.nunprofitableTrades;

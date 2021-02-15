@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 public class TradeHistoryItemBuilder
 {
     private static final int DEFAULT_N_TICKS_BEFORE_TRADE = 20;
-    private static final int DEFAULT_N_TICKS_AFTER_TRADE = 20;
+    private static final int DEFAULT_N_TICKS_AFTER_TRADE = 80;
 
     public TradeHistoryItem build(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {

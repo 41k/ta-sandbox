@@ -19,9 +19,14 @@ public class DbBarProvider implements BarProvider
     public List<Bar> getBars()
     {
         var symbol = "ETH_USD";
-        var interval = "ONE_MINUTE";
-        var fromTimestamp = 1611063120000L;
-        var toTimestamp = 1611149940000L;
+        //var symbol = "BTC_USD";
+        //var interval = "ONE_MINUTE";
+        var interval = "FIVE_MINUTES";
+        //var interval = "FIFTEEN_MINUTES";
+        //var interval = "THIRTY_MINUTES";
+        //var interval = "ONE_HOUR";
+        var fromTimestamp = 1610196540000L;
+        var toTimestamp = 1615360990000L;
         return barRepository.getBarsInTimeRange(symbol, interval, fromTimestamp, toTimestamp)
                 .stream()
                 .map(BarDbEntry::toDomainObject)

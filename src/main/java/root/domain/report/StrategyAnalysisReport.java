@@ -15,6 +15,8 @@ public class StrategyAnalysisReport
     @NonNull
     Double totalProfit;
     @NonNull
+    Double averageProfitPerTrade;
+    @NonNull
     Long nProfitableTrades;
     @NonNull
     Long nUnprofitableTrades;

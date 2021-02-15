@@ -16,6 +16,7 @@ public class EMAIndicator extends org.ta4j.core.indicators.EMAIndicator implemen
         this.name = format(EMA_INDICATOR_NAME_FORMAT, length);
     }
 
+    @Override
     public String getName()
     {
         return name;
