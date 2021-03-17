@@ -2,8 +2,7 @@ package root.domain.strategy;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.num.Num;
-import root.domain.indicator.Indicator;
+import root.domain.indicator.NumberIndicator;
 import root.domain.level.MainChartLevelProvider;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public abstract class AbstractStrategyFactory implements StrategyFactory
     }
 
     @Override
-    public List<Indicator<Num>> getNumIndicators()
+    public List<NumberIndicator> getNumberIndicators()
     {
         return List.of();
     }

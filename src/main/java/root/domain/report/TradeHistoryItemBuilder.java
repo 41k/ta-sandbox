@@ -3,16 +3,14 @@ package root.domain.report;
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.Bar;
 import org.ta4j.core.BarSeries;
+import org.ta4j.core.Indicator;
 import org.ta4j.core.Trade;
 import org.ta4j.core.num.Num;
-import root.domain.indicator.AdditionalChartNumIndicator;
-import root.domain.indicator.Indicator;
-import root.domain.indicator.MainChartNumIndicator;
+import root.domain.ChartType;
 import root.domain.level.MainChartLevel;
 import root.domain.strategy.StrategyFactory;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -118,8 +116,8 @@ public class TradeHistoryItemBuilder
     private Tick.TickBuilder getTickBuilder(int index, List<Bar> bars, StrategyFactory strategyFactory)
     {
         var bar = bars.get(index);
-        var mainChartNumIndicators = getMainChartNumIndicators(index, strategyFactory);
-        var additionalChartNumIndicators = getAdditionalChartNumIndicators(index, strategyFactory);
+        var mainChartNumIndicators = getNumberIndicators(index, strategyFactory, ChartType.MAIN);
+        var additionalChartNumIndicators = getNumberIndicators(index, strategyFactory, ChartType.ADDITIONAL);
         return Tick.builder()
                 .open(bar.getOpenPrice().doubleValue())
                 .high(bar.getHighPrice().doubleValue())
@@ -131,24 +129,12 @@ public class TradeHistoryItemBuilder
                 .additionalChartNumIndicators(additionalChartNumIndicators);
     }
 
-    private Map<String, Double> getMainChartNumIndicators(int index, StrategyFactory strategyFactory)
-    {
-        Predicate<Indicator<Num>> predicate = indicator -> indicator instanceof MainChartNumIndicator;
-        return getNumberIndicators(index, strategyFactory, predicate);
-    }
-
-    private Map<String, Double> getAdditionalChartNumIndicators(int index, StrategyFactory strategyFactory)
-    {
-        Predicate<Indicator<Num>> predicate = indicator -> indicator instanceof AdditionalChartNumIndicator;
-        return getNumberIndicators(index, strategyFactory, predicate);
-    }
-
-    private Map<String, Double> getNumberIndicators(int index, StrategyFactory strategyFactory, Predicate<Indicator<Num>> predicate)
+    private Map<String, Double> getNumberIndicators(int index, StrategyFactory strategyFactory, ChartType chartType)
     {
         var indicatorNameToValueMap = new LinkedHashMap<String, Double>();
-        strategyFactory.getNumIndicators()
+        strategyFactory.getNumberIndicators()
                 .stream()
-                .filter(predicate)
+                .filter(indicator -> chartType.equals(indicator.getChartType()))
                 .forEach(indicator -> {
                     var indicatorName = indicator.getName();
                     var indicatorValue = getIndicatorValue(indicator, index);

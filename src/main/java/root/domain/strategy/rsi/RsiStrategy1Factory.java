@@ -2,18 +2,17 @@ package root.domain.strategy.rsi;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
-import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.CrossedDownIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
-import root.domain.indicator.Indicator;
-import root.domain.indicator.rsi.RSIIndicator;
-import root.domain.indicator.rsi.RSILevelIndicator;
+import root.domain.indicator.NumberIndicator;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
+
+import static root.domain.indicator.NumberIndicators.rsi;
+import static root.domain.indicator.NumberIndicators.rsiLevel;
 
 //    Buy rule:
 //        (rsi(12) crosses down rsiLevel(30))
@@ -23,40 +22,32 @@ import java.util.List;
 
 public class RsiStrategy1Factory extends AbstractStrategyFactory
 {
-    private final ClosePriceIndicator closePriceIndicator;
-    private final RSIIndicator rsiIndicator;
-    private final RSILevelIndicator rsiLevel30Indicator;
-    private final List<Indicator<Num>> numIndicators;
+    private final ClosePriceIndicator closePrice;
+    private final NumberIndicator rsi;
+    private final NumberIndicator rsiLevel30;
+    private final List<NumberIndicator> numberIndicators;
 
     public RsiStrategy1Factory(String strategyId, BarSeries series)
     {
         super(strategyId, series);
-        this.closePriceIndicator = new ClosePriceIndicator(series);
-        this.rsiIndicator = new RSIIndicator(closePriceIndicator, 12);
-        this.rsiLevel30Indicator = new RSILevelIndicator(series, series.numOf(30));
-        numIndicators = List.of(
-                rsiIndicator, rsiLevel30Indicator
-        );
+        this.closePrice = new ClosePriceIndicator(series);
+        this.rsi = rsi(closePrice, 12);
+        this.rsiLevel30 = rsiLevel(30, series);
+        this.numberIndicators = List.of(rsi, rsiLevel30);
     }
 
     @Override
     public Strategy create()
     {
-        Rule entryRule = // Buy rule:
-                // (rsi(12) crosses down rsiLevel(30))
-                new CrossedDownIndicatorRule(rsiIndicator, rsiLevel30Indicator);
-
-        Rule exitRule = // Sell rule:
-                // (rsi(12) crosses up rsiLevel(30))
-                new CrossedUpIndicatorRule(rsiIndicator, rsiLevel30Indicator);
-
+        var entryRule = new CrossedDownIndicatorRule(rsi, rsiLevel30);
+        var exitRule = new CrossedUpIndicatorRule(rsi, rsiLevel30);
         return new BaseStrategy(strategyId, entryRule, exitRule);
     }
 
     @Override
-    public List<Indicator<Num>> getNumIndicators()
+    public List<NumberIndicator> getNumberIndicators()
     {
-        return numIndicators;
+        return numberIndicators;
     }
 }
 

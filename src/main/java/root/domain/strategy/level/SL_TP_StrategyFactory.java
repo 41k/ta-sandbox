@@ -7,11 +7,8 @@ import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.HighPriceIndicator;
 import org.ta4j.core.indicators.helpers.HighestValueIndicator;
-import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
-import root.domain.indicator.Indicator;
-import root.domain.indicator.wri.WRIndicator;
-import root.domain.indicator.wri.WRLevelIndicator;
+import root.domain.indicator.NumberIndicator;
 import root.domain.level.MainChartLevelProvider;
 import root.domain.rule.StopLossLevelRule;
 import root.domain.rule.TakeProfitLevelRule;
@@ -19,14 +16,19 @@ import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
 
+import static root.domain.indicator.NumberIndicators.williamsR;
+import static root.domain.indicator.NumberIndicators.williamsRLevel;
+
 public class SL_TP_StrategyFactory extends AbstractStrategyFactory
 {
     private final ClosePriceIndicator closePrice;
     private final HighPriceIndicator highPrice;
-    private final WRIndicator wr;
-    private final WRLevelIndicator wrLevelMinus10;
-    private final WRLevelIndicator wrLevelMinus90;
-    private final List<Indicator<Num>> numIndicators;
+
+    private final NumberIndicator wr;
+    private final NumberIndicator wrLevelMinus10;
+    private final NumberIndicator wrLevelMinus90;
+    private final List<NumberIndicator> numberIndicators;
+
     private final MainChartLevelProvider stopLossLevelProvider;
     private final MainChartLevelProvider takeProfitLevelProvider;
     private final List<MainChartLevelProvider> mainChartLevelProviders;
@@ -36,10 +38,10 @@ public class SL_TP_StrategyFactory extends AbstractStrategyFactory
         super(strategyId, series);
         this.closePrice = new ClosePriceIndicator(series);
         this.highPrice = new HighPriceIndicator(series);
-        this.wr = new WRIndicator(series, 14);
-        this.wrLevelMinus10 = new WRLevelIndicator(series, series.numOf(-10));
-        this.wrLevelMinus90 = new WRLevelIndicator(series, series.numOf(-90));
-        this.numIndicators = List.of(wr, wrLevelMinus10, wrLevelMinus90);
+        this.wr = williamsR(10, series);
+        this.wrLevelMinus10 = williamsRLevel(-10, series);
+        this.wrLevelMinus90 = williamsRLevel(-90, series);
+        this.numberIndicators = List.of(wr, wrLevelMinus10, wrLevelMinus90);
         this.takeProfitLevelProvider = new MainChartLevelProvider("TP", this::calculateTakeProfitLevel);
         this.stopLossLevelProvider = new MainChartLevelProvider("SL", this::calculateStopLossLevel);
         this.mainChartLevelProviders = List.of(takeProfitLevelProvider, stopLossLevelProvider);
@@ -57,9 +59,9 @@ public class SL_TP_StrategyFactory extends AbstractStrategyFactory
     }
 
     @Override
-    public List<Indicator<Num>> getNumIndicators()
+    public List<NumberIndicator> getNumberIndicators()
     {
-        return numIndicators;
+        return numberIndicators;
     }
 
     @Override

@@ -1,8 +1,7 @@
 package root.domain.strategy;
 
 import org.ta4j.core.Strategy;
-import org.ta4j.core.num.Num;
-import root.domain.indicator.Indicator;
+import root.domain.indicator.NumberIndicator;
 import root.domain.level.MainChartLevelProvider;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public interface StrategyFactory
 
     String getStrategyId();
 
-    List<Indicator<Num>> getNumIndicators();
+    List<NumberIndicator> getNumberIndicators();
 
     List<MainChartLevelProvider> getMainChartLevelProviders();
 

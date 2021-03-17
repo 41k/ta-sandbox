@@ -5,21 +5,20 @@ import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.BooleanIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
-import root.domain.indicator.Indicator;
-import root.domain.indicator.SMAIndicator;
-import root.domain.indicator.bar.StrongBarIndicator;
+import root.domain.indicator.NumberIndicator;
+import root.domain.indicator.price_action.StrongBarIndicator;
 import root.domain.indicator.trend.UpTrendIndicator;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
 import java.util.Set;
 
-import static root.domain.indicator.bar.BarType.BEARISH;
-import static root.domain.indicator.bar.BarType.BULLISH;
+import static root.domain.indicator.NumberIndicators.sma;
+import static root.domain.indicator.price_action.BarType.BEARISH;
+import static root.domain.indicator.price_action.BarType.BULLISH;
 
 // Based on 2A
 //
@@ -38,19 +37,19 @@ import static root.domain.indicator.bar.BarType.BULLISH;
 public class SMA3_UpTrend_Strategy1Factory extends AbstractStrategyFactory
 {
     private final ClosePriceIndicator closePrice;
-    private final SMAIndicator sma7;
-    private final SMAIndicator sma25;
-    private final SMAIndicator sma100;
-    private final List<Indicator<Num>> numIndicators;
+    private final NumberIndicator sma7;
+    private final NumberIndicator sma25;
+    private final NumberIndicator sma100;
+    private final List<NumberIndicator> numberIndicators;
 
     public SMA3_UpTrend_Strategy1Factory(String strategyId, BarSeries series)
     {
         super(strategyId, series);
         this.closePrice = new ClosePriceIndicator(series);
-        this.sma7 = new SMAIndicator(closePrice, 7);
-        this.sma25 = new SMAIndicator(closePrice, 25);
-        this.sma100 = new SMAIndicator(closePrice, 100);
-        this.numIndicators = List.of(sma7, sma25, sma100);
+        this.sma7 = sma(closePrice, 7);
+        this.sma25 = sma(closePrice, 25);
+        this.sma100 = sma(closePrice, 100);
+        this.numberIndicators = List.of(sma7, sma25, sma100);
     }
 
     @Override
@@ -83,9 +82,9 @@ public class SMA3_UpTrend_Strategy1Factory extends AbstractStrategyFactory
     }
 
     @Override
-    public List<Indicator<Num>> getNumIndicators()
+    public List<NumberIndicator> getNumberIndicators()
     {
-        return numIndicators;
+        return numberIndicators;
     }
 }
 

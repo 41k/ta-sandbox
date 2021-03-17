@@ -23,7 +23,7 @@ public class CsvBarProvider implements BarProvider
     private static final String FILE_PATH = "data/ohlcvt-1m-1.csv";
 
     @Override
-    public List<Bar> getBars()
+    public List<Bar> getBars(String symbol, String interval, long fromTimestamp, long toTimestamp)
     {
         List<Bar> bars = new ArrayList<>();
         InputStream stream = CsvBarProvider.class.getClassLoader().getResourceAsStream(FILE_PATH);

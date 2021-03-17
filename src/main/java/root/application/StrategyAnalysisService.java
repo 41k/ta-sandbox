@@ -3,17 +3,14 @@ package root.application;
 import lombok.RequiredArgsConstructor;
 import org.ta4j.core.BarSeriesManager;
 import org.ta4j.core.BaseBarSeries;
-import org.ta4j.core.cost.LinearTransactionCostModel;
-import org.ta4j.core.cost.ZeroCostModel;
-import root.domain.report.StrategyAnalysisReportBuilder;
 import root.domain.report.StrategyAnalysisReport;
+import root.domain.report.StrategyAnalysisReportBuilder;
 import root.domain.strategy.level.SL_TP_StrategyFactory;
-import root.domain.strategy.mess.NewStrategyFactory;
-import root.domain.strategy.ready.*;
-import root.domain.strategy.rsi.RsiStrategy1Factory;
-import root.domain.strategy.sma.SmaStrategy3BFactory;
-
-import static org.ta4j.core.Order.OrderType.BUY;
+import root.domain.strategy.macd.MacdStrategy1Factory;
+import root.domain.strategy.ready.ETHUSD_15m_EMA_PA_Strategy1Factory;
+import root.domain.strategy.ready.ETHUSD_5m_BB_Strategy2Factory;
+import root.domain.strategy.ready.ETHUSD_5m_UpTrend_Strategy1Factory;
+import root.domain.strategy.ready.SAR_WR_Strategy1Factory;
 
 @RequiredArgsConstructor
 public class StrategyAnalysisService
@@ -22,15 +19,23 @@ public class StrategyAnalysisService
 
     public StrategyAnalysisReport analyse()
     {
-        var bars = barProvider.getBars();
-        var series = new BaseBarSeries(bars);
-        //var strategyFactory = new SmaStrategy3BFactory("SMA", series, 7, 25, 100);
-        //var strategyFactory = new RsiStrategy1Factory("RSI", series);
-        //var strategyFactory = new SAR_WR_Strategy1Factory("SAR-WR", series);
-        //var strategyFactory = new ETHUSD_5m_UpTrend_Strategy1Factory("NEW", series);
-        //var strategyFactory = new ETHUSD_5m_UpTrend_Strategy1Factory("NEW", series);
-        //var strategyFactory = new NewStrategyFactory("NEW", series);
-        var strategyFactory = new SL_TP_StrategyFactory("SL-TP", series);
+        var fromTimestamp = 1610196540000L;
+        var toTimestamp = 1616581994000L;
+        var symbol = "ETH_USD";
+//        var interval = "ONE_MINUTE";
+        var interval = "FIVE_MINUTES";
+//        var interval = "FIFTEEN_MINUTES";
+//        var interval = "THIRTY_MINUTES";
+//        var interval = "ONE_HOUR";
+        var series = new BaseBarSeries(barProvider.getBars(symbol, interval, fromTimestamp, toTimestamp));
+//        var strategyFactory = new MacdStrategy1Factory("MACD", series);
+//        var strategyFactory = new SAR_WR_Strategy1Factory("SAR-WR", series);
+        var strategyFactory = new ETHUSD_5m_UpTrend_Strategy1Factory("NEW", series);
+//        var strategyFactory = new ETHUSD_5m_BB_Strategy2Factory("BB2", series);
+//        var strategyFactory = new ETHUSD_5m_DownTrend_Strategy1Factory("DT", series);
+//        var strategyFactory = new ETHUSD_15m_EMA_PA_Strategy1Factory("EMA-PA", series);
+//        var strategyFactory = new SL_TP_StrategyFactory("SL&TP", series);
+//        var strategyFactory = new MasterCandleStrategyFactory("Master candle", series);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);

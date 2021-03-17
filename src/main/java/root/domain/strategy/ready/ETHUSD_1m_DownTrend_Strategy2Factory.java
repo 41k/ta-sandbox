@@ -2,47 +2,45 @@ package root.domain.strategy.ready;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
-import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.BooleanIndicatorRule;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
-import root.domain.indicator.EMAIndicator;
-import root.domain.indicator.Indicator;
-import root.domain.indicator.bar.DominatingBarTypeSubSeriesIndicator;
+import root.domain.indicator.NumberIndicator;
+import root.domain.indicator.price_action.DominatingBarTypeSubSeriesIndicator;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
 
-import static root.domain.indicator.bar.BarType.BEARISH;
+import static root.domain.indicator.NumberIndicators.ema;
+import static root.domain.indicator.price_action.BarType.BEARISH;
 
 public class ETHUSD_1m_DownTrend_Strategy2Factory extends AbstractStrategyFactory
 {
     private final ClosePriceIndicator closePrice;
-    private final EMAIndicator ema;
-    private final List<Indicator<Num>> numIndicators;
+    private final NumberIndicator ema;
+    private final List<NumberIndicator> numberIndicators;
 
     public ETHUSD_1m_DownTrend_Strategy2Factory(String strategyId, BarSeries series)
     {
         super(strategyId, series);
         this.closePrice = new ClosePriceIndicator(series);
-        this.ema = new EMAIndicator(closePrice, 60);
-        this.numIndicators = List.of(ema);
+        this.ema = ema(closePrice, 60);
+        this.numberIndicators = List.of(ema);
     }
 
     @Override
     public Strategy create()
     {
-        Rule entryRule = new BooleanIndicatorRule(new DominatingBarTypeSubSeriesIndicator(BEARISH, 25, 7, series));
-        Rule exitRule = new CrossedUpIndicatorRule(closePrice, ema);
+        var entryRule = new BooleanIndicatorRule(new DominatingBarTypeSubSeriesIndicator(BEARISH, 25, 7, series));
+        var exitRule = new CrossedUpIndicatorRule(closePrice, ema);
         return new BaseStrategy(strategyId, entryRule, exitRule);
     }
 
     @Override
-    public List<Indicator<Num>> getNumIndicators()
+    public List<NumberIndicator> getNumberIndicators()
     {
-        return numIndicators;
+        return numberIndicators;
     }
 }
 

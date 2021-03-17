@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface BarProvider
 {
-    List<Bar> getBars();
+    List<Bar> getBars(String symbol, String interval, long fromTimestamp, long toTimestamp);
 }

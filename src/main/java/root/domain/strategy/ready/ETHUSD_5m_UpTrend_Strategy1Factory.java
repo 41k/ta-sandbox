@@ -2,47 +2,44 @@ package root.domain.strategy.ready;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
-import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.*;
-import root.domain.indicator.Indicator;
-import root.domain.indicator.SMAIndicator;
+import root.domain.indicator.NumberIndicator;
 import root.domain.indicator.trend.UpTrendIndicator;
-import root.domain.indicator.wri.WRIndicator;
-import root.domain.indicator.wri.WRLevelIndicator;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
 
+import static root.domain.indicator.NumberIndicators.*;
+
 public class ETHUSD_5m_UpTrend_Strategy1Factory extends AbstractStrategyFactory
 {
     private final ClosePriceIndicator closePrice;
-    private final SMAIndicator sma10;
-    private final SMAIndicator sma100;
-    private final SMAIndicator sma200;
-    private final WRIndicator wr;
-    private final WRLevelIndicator wrLevelMinus10;
-    private final WRLevelIndicator wrLevelMinus90;
-    private final List<Indicator<Num>> numIndicators;
+    private final NumberIndicator sma10;
+    private final NumberIndicator sma100;
+    private final NumberIndicator sma200;
+    private final NumberIndicator wr;
+    private final NumberIndicator wrLevelMinus10;
+    private final NumberIndicator wrLevelMinus90;
+    private final List<NumberIndicator> numberIndicators;
 
     public ETHUSD_5m_UpTrend_Strategy1Factory(String strategyId, BarSeries series)
     {
         super(strategyId, series);
         this.closePrice = new ClosePriceIndicator(series);
-        this.sma10 = new SMAIndicator(closePrice, 10);
-        this.sma100 = new SMAIndicator(closePrice, 100);
-        this.sma200 = new SMAIndicator(closePrice, 200);
-        this.wr = new WRIndicator(series, 10);
-        this.wrLevelMinus10 = new WRLevelIndicator(series, series.numOf(-10));
-        this.wrLevelMinus90 = new WRLevelIndicator(series, series.numOf(-90));
-        numIndicators = List.of(sma10, sma100, sma200, wr, wrLevelMinus10, wrLevelMinus90);
+        this.sma10 = sma(closePrice,10);
+        this.sma100 = sma(closePrice,100);
+        this.sma200 = sma(closePrice,200);
+        this.wr = williamsR(10, series);
+        this.wrLevelMinus10 = williamsRLevel(-10, series);
+        this.wrLevelMinus90 = williamsRLevel(-90, series);
+        this.numberIndicators = List.of(sma10, sma100, sma200, wr, wrLevelMinus10, wrLevelMinus90);
     }
     @Override
     public Strategy create()
     {
-        Rule entryRule =
+        var entryRule =
                 new OverIndicatorRule(closePrice, sma200)
                         .and(new UnderIndicatorRule(closePrice, sma10))
                         .and(new CrossedDownIndicatorRule(wr, wrLevelMinus90))
@@ -51,18 +48,18 @@ public class ETHUSD_5m_UpTrend_Strategy1Factory extends AbstractStrategyFactory
                         // as more safe replacement for sma100 up trend rule
                         //.and(new IsFallingRule(new DifferenceIndicator(sma200, sma100), 10));
 
-        Rule exitRule =
+        var exitRule =
                 new CrossedUpIndicatorRule(wr, wrLevelMinus10);
 
-        int unstablePeriod = 200;
+        var unstablePeriod = 200;
 
         return new BaseStrategy(strategyId, entryRule, exitRule, unstablePeriod);
     }
 
     @Override
-    public List<Indicator<Num>> getNumIndicators()
+    public List<NumberIndicator> getNumberIndicators()
     {
-        return numIndicators;
+        return numberIndicators;
     }
 }
 

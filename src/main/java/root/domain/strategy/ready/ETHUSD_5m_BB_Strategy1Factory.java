@@ -2,36 +2,30 @@ package root.domain.strategy.ready;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
-import org.ta4j.core.Rule;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
 import org.ta4j.core.indicators.helpers.LowPriceIndicator;
-import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
-import org.ta4j.core.num.Num;
 import org.ta4j.core.trading.rules.BooleanIndicatorRule;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
-import root.domain.indicator.Indicator;
-import root.domain.indicator.SMAIndicator;
-import root.domain.indicator.bar.BarIndicator;
-import root.domain.indicator.bollinger.BBLowerIndicator;
-import root.domain.indicator.bollinger.BBMiddleIndicator;
-import root.domain.indicator.bollinger.BBUpperIndicator;
+import root.domain.indicator.NumberIndicator;
+import root.domain.indicator.price_action.SingleBarPriceActionIndicator;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
 
 import static java.lang.Double.MAX_VALUE;
-import static root.domain.indicator.bar.BarType.BULLISH;
+import static root.domain.indicator.NumberIndicators.*;
+import static root.domain.indicator.price_action.BarType.BULLISH;
 
 public class ETHUSD_5m_BB_Strategy1Factory extends AbstractStrategyFactory
 {
     private final ClosePriceIndicator closePrice;
     private final LowPriceIndicator lowPrice;
-    private final BBMiddleIndicator bbm;
-    private final BBUpperIndicator bbu;
-    private final BBLowerIndicator bbl;
-    private final List<Indicator<Num>> numIndicators;
+    private final NumberIndicator bbm;
+    private final NumberIndicator bbu;
+    private final NumberIndicator bbl;
+    private final List<NumberIndicator> numberIndicators;
 
     public ETHUSD_5m_BB_Strategy1Factory(String strategyId, BarSeries series)
     {
@@ -39,26 +33,25 @@ public class ETHUSD_5m_BB_Strategy1Factory extends AbstractStrategyFactory
         this.closePrice = new ClosePriceIndicator(series);
         this.lowPrice = new LowPriceIndicator(series);
         var periodLength = 20;
-        var standardDeviation = new StandardDeviationIndicator(closePrice, periodLength);
-        this.bbm = new BBMiddleIndicator(new SMAIndicator(closePrice, periodLength));
-        this.bbu = new BBUpperIndicator(bbm, standardDeviation, series.numOf(2));
-        this.bbl = new BBLowerIndicator(bbm, standardDeviation, series.numOf(2));
-        numIndicators = List.of(bbu, bbm, bbl);
+        this.bbm = bollingerBandsMiddle(closePrice, periodLength);
+        this.bbu = bollingerBandsUpper(bbm, closePrice, periodLength);
+        this.bbl = bollingerBandsLower(bbm, closePrice, periodLength);
+        this.numberIndicators = List.of(bbu, bbm, bbl);
     }
 
     @Override
     public Strategy create()
     {
-        Rule hammerBar = new BooleanIndicatorRule(new BarIndicator(BULLISH, 0, 5, 11, MAX_VALUE, 0, MAX_VALUE, series));
-        Rule entryRule = new UnderIndicatorRule(lowPrice, bbl).and(hammerBar);
-        Rule exitRule = new OverIndicatorRule(closePrice, bbm);
+        var hammerBar = new BooleanIndicatorRule(new SingleBarPriceActionIndicator(BULLISH, 0, 5, 11, MAX_VALUE, 0, MAX_VALUE, series));
+        var entryRule = new UnderIndicatorRule(lowPrice, bbl).and(hammerBar);
+        var exitRule = new OverIndicatorRule(closePrice, bbm);
         return new BaseStrategy(strategyId, entryRule, exitRule);
     }
 
     @Override
-    public List<Indicator<Num>> getNumIndicators()
+    public List<NumberIndicator> getNumberIndicators()
     {
-        return numIndicators;
+        return numberIndicators;
     }
 }
 
