@@ -7,6 +7,7 @@ import org.ta4j.core.cost.LinearTransactionCostModel;
 import org.ta4j.core.cost.ZeroCostModel;
 import root.domain.report.StrategyAnalysisReportBuilder;
 import root.domain.report.StrategyAnalysisReport;
+import root.domain.strategy.level.SL_TP_StrategyFactory;
 import root.domain.strategy.mess.NewStrategyFactory;
 import root.domain.strategy.ready.*;
 import root.domain.strategy.rsi.RsiStrategy1Factory;
@@ -28,7 +29,8 @@ public class StrategyAnalysisService
         //var strategyFactory = new SAR_WR_Strategy1Factory("SAR-WR", series);
         //var strategyFactory = new ETHUSD_5m_UpTrend_Strategy1Factory("NEW", series);
         //var strategyFactory = new ETHUSD_5m_UpTrend_Strategy1Factory("NEW", series);
-        var strategyFactory = new NewStrategyFactory("NEW", series);
+        //var strategyFactory = new NewStrategyFactory("NEW", series);
+        var strategyFactory = new SL_TP_StrategyFactory("SL-TP", series);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);

@@ -3,7 +3,7 @@ function TickSeriesChartRenderer(priceChartType) {
     var priceChartType = priceChartType;
     var dateTimeFormat = 'yyyy-mm-dd HH:MM:ss';
     var timeFormat = 'HH:MM:ss';
-    var additionalChartIndicatorTypes = ['ADX', 'RSI', 'MACD', 'OBV', 'WR'];
+    var additionalChartIndicatorTypes = ['Shadow', 'ADX', 'RSI', 'MACD', 'OBV', 'WR'];
 
     this.renderTickSeries = function(tickSeries, seriesSegmentSize, wrapperId) {
         var tickSeriesSegments = formSeriesSegments(tickSeries, seriesSegmentSize);
@@ -155,8 +155,9 @@ function TickSeriesChartRenderer(priceChartType) {
         var bodySize = (isBullishBar ? (closePrice - openPrice) : (openPrice - closePrice)).toFixed(2);
         var lowerShadowSize = (isBullishBar ? (openPrice - lowPrice) : (closePrice - lowPrice)).toFixed(2);
         var upperShadowSize = (isBullishBar ? (highPrice - closePrice) : (highPrice - openPrice)).toFixed(2);
-        var message = 'body: ' + bodySize + ' -- lower shadow: ' + lowerShadowSize + ' -- upper shadow: ' + upperShadowSize;
-        console.log(message);
+        console.log('------------------- [' + dataPointIndex + ']');
+        console.log('o: ' + openPrice + ' -- h: ' + highPrice + ' -- l: ' + lowPrice + ' -- c: ' + closePrice)
+        console.log('body: ' + bodySize + ' -- lower shadow: ' + lowerShadowSize + ' -- upper shadow: ' + upperShadowSize);
     }
 
     var addLineIndicators = function(options, ticks) {
@@ -223,9 +224,9 @@ function TickSeriesChartRenderer(priceChartType) {
                 x: new Date(tick.timestamp),
                 y: tick.close
             });
-       });
-       options.series.push(series);
-       options.stroke.width.push(4);
+        });
+        options.series.push(series);
+        options.stroke.width.push(4);
     }
 
     var addSignals = function(options, ticks) {
@@ -261,7 +262,7 @@ function TickSeriesChartRenderer(priceChartType) {
 
     var addLevels = function(options, ticks) {
         ticks.forEach(tick => {
-            var levels = tick.levels;
+            var levels = tick.mainChartLevels;
             if (levels) {
                 levels.forEach(level => {
                     options.annotations.yaxis.push(createLevel(level));
@@ -283,6 +284,8 @@ function TickSeriesChartRenderer(priceChartType) {
                     background: colorHex,
                 },
                 text: level.name,
+                position: 'left',
+                textAnchor: 'start',
             }
         }
     }

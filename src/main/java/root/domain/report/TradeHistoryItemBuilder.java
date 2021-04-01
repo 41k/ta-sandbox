@@ -8,7 +8,7 @@ import org.ta4j.core.num.Num;
 import root.domain.indicator.AdditionalChartNumIndicator;
 import root.domain.indicator.Indicator;
 import root.domain.indicator.MainChartNumIndicator;
-import root.domain.level.Level;
+import root.domain.level.MainChartLevel;
 import root.domain.strategy.StrategyFactory;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 public class TradeHistoryItemBuilder
 {
     private static final int DEFAULT_N_TICKS_BEFORE_TRADE = 20;
-    private static final int DEFAULT_N_TICKS_AFTER_TRADE = 80;
+    private static final int DEFAULT_N_TICKS_AFTER_TRADE = 20;
 
     public TradeHistoryItem build(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {
@@ -96,7 +96,7 @@ public class TradeHistoryItemBuilder
             if (i == entryOrderIndex)
             {
                 tickBuilder.signal(entryOrder.getType())
-                        .levels(getEntryOrderRelatedLevels(i, strategyFactory));
+                        .mainChartLevels(getMainChartLevels(i, strategyFactory));
             }
             else if (i == exitOrderIndex)
             {
@@ -107,12 +107,12 @@ public class TradeHistoryItemBuilder
         return ticks;
     }
 
-    private List<Level> getEntryOrderRelatedLevels(int index, StrategyFactory strategyFactory)
+    private List<MainChartLevel> getMainChartLevels(int entryOrderIndex, StrategyFactory strategyFactory)
     {
-        return strategyFactory.getStopLossLevelProvider()
-                .map(levelProvider -> levelProvider.getLevel(index))
-                .map(List::of)
-                .orElseGet(List::of);
+        return strategyFactory.getMainChartLevelProviders()
+                .stream()
+                .map(mainChartLevelProvider -> mainChartLevelProvider.getLevel(entryOrderIndex))
+                .collect(toList());
     }
 
     private Tick.TickBuilder getTickBuilder(int index, List<Bar> bars, StrategyFactory strategyFactory)

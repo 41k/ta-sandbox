@@ -2,6 +2,12 @@ package root.domain.strategy;
 
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Strategy;
+import org.ta4j.core.num.Num;
+import root.domain.indicator.Indicator;
+import root.domain.level.MainChartLevelProvider;
+
+import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractStrategyFactory implements StrategyFactory
 {
@@ -22,6 +28,24 @@ public abstract class AbstractStrategyFactory implements StrategyFactory
     public String getStrategyId()
     {
         return strategyId;
+    }
+
+    @Override
+    public List<Indicator<Num>> getNumIndicators()
+    {
+        return List.of();
+    }
+
+    @Override
+    public List<MainChartLevelProvider> getMainChartLevelProviders()
+    {
+        return List.of();
+    }
+
+    @Override
+    public Optional<Integer> getUnstablePeriodLength()
+    {
+        return Optional.empty();
     }
 
     private void checkInput(String strategyId, BarSeries series)
