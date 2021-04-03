@@ -3,6 +3,7 @@ package root.domain.indicator;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Indicator;
 import org.ta4j.core.indicators.*;
+import org.ta4j.core.indicators.adx.ADXIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
@@ -11,6 +12,8 @@ import org.ta4j.core.indicators.helpers.DifferenceIndicator;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.Num;
+import root.domain.indicator.trend.TrendLineIndicator;
+import root.domain.indicator.trend.TrendOscillatorIndicator;
 
 import static java.lang.String.format;
 import static root.domain.ChartType.ADDITIONAL;
@@ -21,6 +24,33 @@ public final class NumberIndicators
     private static final String ONE_PARAMETER_NAME_FORMAT = "%s(%d)";
     private static final String TWO_PARAMETERS_NAME_FORMAT = "%s(%d, %d)";
     private static final String LEVEL_FORMAT = "%s-level(%d)";
+
+    public static NumberIndicator trendLine(BarSeries series, boolean useAtrFilter)
+    {
+        return NumberIndicator.builder()
+                .name("Trend Line")
+                .chartType(MAIN)
+                .indicator(new TrendLineIndicator(series, useAtrFilter))
+                .build();
+    }
+
+    public static NumberIndicator trendOscillator(BarSeries series, boolean useAtrFilter)
+    {
+        return NumberIndicator.builder()
+                .name("Trend Oscillator")
+                .chartType(ADDITIONAL)
+                .indicator(new TrendOscillatorIndicator(series, useAtrFilter))
+                .build();
+    }
+
+    public static NumberIndicator tema(Indicator<Num> indicator, int length)
+    {
+        return NumberIndicator.builder()
+                .name(format(ONE_PARAMETER_NAME_FORMAT, "TEMA", length))
+                .chartType(MAIN)
+                .indicator(new TripleEMAIndicator(indicator, length))
+                .build();
+    }
 
     public static NumberIndicator ema(Indicator<Num> indicator, int length)
     {
@@ -141,6 +171,20 @@ public final class NumberIndicators
     public static NumberIndicator macdLevel(int value, BarSeries series)
     {
         return level("MACD", value, series);
+    }
+
+    public static NumberIndicator adx(BarSeries series, int diBarCount, int adxBarCount)
+    {
+        return NumberIndicator.builder()
+                .name(format(TWO_PARAMETERS_NAME_FORMAT, "ADX", diBarCount, adxBarCount))
+                .chartType(ADDITIONAL)
+                .indicator(new ADXIndicator(series, diBarCount, adxBarCount))
+                .build();
+    }
+
+    public static NumberIndicator adxLevel(int value, BarSeries series)
+    {
+        return level("ADX", value, series);
     }
 
     public static NumberIndicator level(String namePrefix, int value, BarSeries series)
