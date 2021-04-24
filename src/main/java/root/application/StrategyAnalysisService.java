@@ -7,10 +7,11 @@ import org.ta4j.core.cost.LinearTransactionCostModel;
 import org.ta4j.core.cost.ZeroCostModel;
 import root.domain.report.StrategyAnalysisReport;
 import root.domain.report.StrategyAnalysisReportBuilder;
-import root.domain.strategy.mess.NewStrategy1Factory;
-import root.domain.strategy.mess.NewStrategy2Factory;
-import root.domain.strategy.mess.NewStrategy3Factory;
-import root.domain.strategy.mess.NewStrategy4Factory;
+import root.domain.strategy.level.SL_TP_StrategyFactory;
+import root.domain.strategy.mess.*;
+import root.domain.strategy.ready.ETHUSD_5m_OnlyTP_DownTrend_Strategy1Factory;
+import root.domain.strategy.ready.ETHUSD_5m_OnlyTP_UpTrend_Strategy1Factory;
+import root.domain.strategy.ready.ETHUSD_5m_Pullback_Strategy1Factory;
 
 import static org.ta4j.core.Order.OrderType.BUY;
 
@@ -36,10 +37,13 @@ public class StrategyAnalysisService
 //        var strategyFactory = new ETHUSD_5m_BB_Strategy2Factory("BB2", series);
 //        var strategyFactory = new ETHUSD_5m_DownTrend_Strategy1Factory("DT", series);
 //        var strategyFactory = new ETHUSD_15m_EMA_PA_Strategy1Factory("EMA-PA", series);
+//        var strategyFactory = new ETHUSD_5m_Pullback_Strategy1Factory("Pullback", series);
+//        var strategyFactory = new ETHUSD_5m_OnlyTP_UpTrend_Strategy1Factory("Only TP in UpTrend", series);
+//        var strategyFactory = new ETHUSD_5m_OnlyTP_DownTrend_Strategy1Factory("Only TP in DownTrend", series);
 //        var strategyFactory = new SL_TP_StrategyFactory("SL&TP", series);
 //        var strategyFactory = new MasterCandleStrategyFactory("Master candle", series);
 //        var strategyFactory = new NewStrategy1Factory("Trend Following", series);
-        var strategyFactory = new NewStrategy4Factory("New", series);
+        var strategyFactory = new NewStrategy5Factory("New", series);
         var strategy = strategyFactory.create();
         var seriesManager = new BarSeriesManager(series);
         var tradingRecord = seriesManager.run(strategy);

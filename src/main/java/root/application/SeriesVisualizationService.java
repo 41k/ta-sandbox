@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static org.ta4j.core.indicators.pivotpoints.FibonacciReversalIndicator.FibReversalTyp.SUPPORT;
+import static org.ta4j.core.indicators.pivotpoints.TimeLevel.DAY;
 import static root.domain.indicator.NumberIndicators.*;
 
 @RequiredArgsConstructor
@@ -35,8 +37,15 @@ public class SeriesVisualizationService
         var ema100 = ema(closePrice, 100);
         var ema200 = ema(closePrice, 200);
         var ema400 = ema(closePrice, 400);
+
         var trendLine = trendLine(series, true);
         var trendOscillator = trendOscillator(series, true);
+
+        var fib_0 = fibinacci(0, SUPPORT, DAY, series);
+        var fib_0_382 = fibinacci(0.382, SUPPORT, DAY, series);
+        var fib_0_5 = fibinacci(0.5, SUPPORT, DAY, series);
+        var fib_0_618 = fibinacci(0.618, SUPPORT, DAY, series);
+        var fib_1 = fibinacci(1, SUPPORT, DAY, series);
 
         var seriesVisualization = new ArrayList<Tick>();
         for (int i = series.getBeginIndex(); i <= series.getEndIndex(); i++)
@@ -44,10 +53,15 @@ public class SeriesVisualizationService
             var mainChartNumIndicators = new LinkedHashMap<String, Double>();
 //            mainChartNumIndicators.put(bbu.getName(), getIndicatorValue(bbu, i));
 //            mainChartNumIndicators.put(trendLine.getName(), getIndicatorValue(trendLine, i));
-            mainChartNumIndicators.put(ema50.getName(), getIndicatorValue(ema50, i));
-            mainChartNumIndicators.put(ema100.getName(), getIndicatorValue(ema100, i));
-            mainChartNumIndicators.put(ema200.getName(), getIndicatorValue(ema200, i));
-            mainChartNumIndicators.put(ema400.getName(), getIndicatorValue(ema400, i));
+//            mainChartNumIndicators.put(ema50.getName(), getIndicatorValue(ema50, i));
+//            mainChartNumIndicators.put(ema100.getName(), getIndicatorValue(ema100, i));
+//            mainChartNumIndicators.put(ema200.getName(), getIndicatorValue(ema200, i));
+//            mainChartNumIndicators.put(ema400.getName(), getIndicatorValue(ema400, i));
+            mainChartNumIndicators.put(fib_0.getName(), getIndicatorValue(fib_0, i));
+            mainChartNumIndicators.put(fib_0_382.getName(), getIndicatorValue(fib_0_382, i));
+            mainChartNumIndicators.put(fib_0_5.getName(), getIndicatorValue(fib_0_5, i));
+            mainChartNumIndicators.put(fib_0_618.getName(), getIndicatorValue(fib_0_618, i));
+            mainChartNumIndicators.put(fib_1.getName(), getIndicatorValue(fib_1, i));
 
             var additionalChartNumIndicators = new LinkedHashMap<String, Double>();
 //            additionalChartNumIndicators.put(adxLevel30.getName(), getIndicatorValue(adxLevel30, i));

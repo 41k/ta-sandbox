@@ -10,6 +10,9 @@ import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
 import org.ta4j.core.indicators.helpers.ConstantIndicator;
 import org.ta4j.core.indicators.helpers.DifferenceIndicator;
 import org.ta4j.core.indicators.helpers.PriceIndicator;
+import org.ta4j.core.indicators.pivotpoints.FibonacciReversalIndicator;
+import org.ta4j.core.indicators.pivotpoints.PivotPointIndicator;
+import org.ta4j.core.indicators.pivotpoints.TimeLevel;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.Num;
 import root.domain.indicator.trend.TrendLineIndicator;
@@ -24,6 +27,16 @@ public final class NumberIndicators
     private static final String ONE_PARAMETER_NAME_FORMAT = "%s(%d)";
     private static final String TWO_PARAMETERS_NAME_FORMAT = "%s(%d, %d)";
     private static final String LEVEL_FORMAT = "%s-level(%d)";
+
+    public static NumberIndicator fibinacci(Number level, FibonacciReversalIndicator.FibReversalTyp reversalType, TimeLevel timeLevel, BarSeries series)
+    {
+        var pivotPointIndicator = new PivotPointIndicator(series, timeLevel);
+        return NumberIndicator.builder()
+                .name(format("Fib(%s)", level.toString()))
+                .chartType(MAIN)
+                .indicator(new FibonacciReversalIndicator(pivotPointIndicator, level.doubleValue(), reversalType))
+                .build();
+    }
 
     public static NumberIndicator trendLine(BarSeries series, boolean useAtrFilter)
     {

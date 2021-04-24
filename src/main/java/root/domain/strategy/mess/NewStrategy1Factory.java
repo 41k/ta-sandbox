@@ -8,7 +8,6 @@ import org.ta4j.core.trading.rules.OverIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import root.domain.indicator.NumberIndicator;
 import root.domain.level.MainChartLevelProvider;
-import root.domain.rule.StopLossLevelRule;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;

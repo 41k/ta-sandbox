@@ -10,8 +10,8 @@ import org.ta4j.core.indicators.helpers.HighestValueIndicator;
 import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
 import root.domain.indicator.NumberIndicator;
 import root.domain.level.MainChartLevelProvider;
-import root.domain.rule.StopLossLevelRule;
-import root.domain.rule.TakeProfitLevelRule;
+import root.domain.rule.OverMainChartLevelRule;
+import root.domain.rule.UnderMainChartLevelRule;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
@@ -29,8 +29,8 @@ public class SL_TP_StrategyFactory extends AbstractStrategyFactory
     private final NumberIndicator wrLevelMinus90;
     private final List<NumberIndicator> numberIndicators;
 
-    private final MainChartLevelProvider stopLossLevelProvider;
-    private final MainChartLevelProvider takeProfitLevelProvider;
+    private final MainChartLevelProvider stopLossLevel;
+    private final MainChartLevelProvider takeProfitLevel;
     private final List<MainChartLevelProvider> mainChartLevelProviders;
 
     public SL_TP_StrategyFactory(String strategyId, BarSeries series)
@@ -38,13 +38,15 @@ public class SL_TP_StrategyFactory extends AbstractStrategyFactory
         super(strategyId, series);
         this.closePrice = new ClosePriceIndicator(series);
         this.highPrice = new HighPriceIndicator(series);
+
         this.wr = williamsR(10, series);
         this.wrLevelMinus10 = williamsRLevel(-10, series);
         this.wrLevelMinus90 = williamsRLevel(-90, series);
         this.numberIndicators = List.of(wr, wrLevelMinus10, wrLevelMinus90);
-        this.takeProfitLevelProvider = new MainChartLevelProvider("TP", this::calculateTakeProfitLevel);
-        this.stopLossLevelProvider = new MainChartLevelProvider("SL", this::calculateStopLossLevel);
-        this.mainChartLevelProviders = List.of(takeProfitLevelProvider, stopLossLevelProvider);
+
+        this.takeProfitLevel = new MainChartLevelProvider("TP", this::calculateTakeProfitLevel);
+        this.stopLossLevel = new MainChartLevelProvider("SL", this::calculateStopLossLevel);
+        this.mainChartLevelProviders = List.of(takeProfitLevel, stopLossLevel);
     }
 
     @Override
@@ -52,8 +54,8 @@ public class SL_TP_StrategyFactory extends AbstractStrategyFactory
     {
         Rule entryRule = new CrossedUpIndicatorRule(wr, wrLevelMinus90);
 
-        Rule exitRule = new TakeProfitLevelRule(closePrice, takeProfitLevelProvider)
-                .or(new StopLossLevelRule(closePrice, stopLossLevelProvider));
+        Rule exitRule = new OverMainChartLevelRule(closePrice, takeProfitLevel)
+                .or(new UnderMainChartLevelRule(closePrice, stopLossLevel));
 
         return new BaseStrategy(strategyId, entryRule, exitRule);
     }

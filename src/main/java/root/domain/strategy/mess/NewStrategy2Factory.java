@@ -8,14 +8,10 @@ import org.ta4j.core.trading.rules.OverIndicatorRule;
 import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import root.domain.indicator.NumberIndicator;
 import root.domain.level.MainChartLevelProvider;
-import root.domain.rule.StopLossLevelRule;
-import root.domain.rule.TakeProfitLevelRule;
+import root.domain.rule.UnderMainChartLevelRule;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
-
-import static root.domain.ChartType.MAIN;
-import static root.domain.indicator.NumberIndicators.*;
 
 public class NewStrategy2Factory extends AbstractStrategyFactory
 {
@@ -66,7 +62,7 @@ public class NewStrategy2Factory extends AbstractStrategyFactory
                 .or(new OverIndicatorRule(new HighestValueIndicator(highPrice, 3), new PreviousValueIndicator(new HighestValueIndicator(highPrice, 50), 3)));
 
         var exitRule = sellCondition1.and(sellCondition2).and(sellCondition3)
-                .or(new StopLossLevelRule(closePrice, stopLossLevelProvider));
+                .or(new UnderMainChartLevelRule(closePrice, stopLossLevelProvider));
 
         return new BaseStrategy(strategyId, entryRule, exitRule);
     }

@@ -13,8 +13,8 @@ import org.ta4j.core.trading.rules.OverIndicatorRule;
 import root.domain.indicator.helpers.PreviousBooleanIndicator;
 import root.domain.indicator.price_action.MasterCandleIndicator;
 import root.domain.level.MainChartLevelProvider;
-import root.domain.rule.StopLossLevelRule;
-import root.domain.rule.TakeProfitLevelRule;
+import root.domain.rule.UnderMainChartLevelRule;
+import root.domain.rule.OverMainChartLevelRule;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
@@ -64,8 +64,8 @@ public class MasterCandleStrategyFactory extends AbstractStrategyFactory
                 .or(masterCandleBullishBreakoutOn6thBar)
                 .or(masterCandleBullishBreakoutOn7thBar);
 
-        var exitRule = new TakeProfitLevelRule(closePrice, takeProfitLevelProvider)
-                .or(new StopLossLevelRule(lowPrice, stopLossLevelProvider));
+        var exitRule = new OverMainChartLevelRule(closePrice, takeProfitLevelProvider)
+                .or(new UnderMainChartLevelRule(lowPrice, stopLossLevelProvider));
 
         return new BaseStrategy(strategyId, entryRule, exitRule);
     }
