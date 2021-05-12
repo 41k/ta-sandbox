@@ -15,6 +15,7 @@ import static org.ta4j.core.num.NaN.NaN;
 import static root.domain.indicator.TrendType.BEARISH;
 import static root.domain.indicator.TrendType.BULLISH;
 
+// Warning: Do not use this indicator with CrossedUpIndicatorRule/CrossedDownIndicatorRule
 public class FibonacciRetracementLevelIndicator extends CachedIndicator<Num>
 {
     private final Num level;

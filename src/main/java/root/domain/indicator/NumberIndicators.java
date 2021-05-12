@@ -15,6 +15,7 @@ import org.ta4j.core.indicators.pivotpoints.PivotPointIndicator;
 import org.ta4j.core.indicators.pivotpoints.TimeLevel;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.Num;
+import root.domain.indicator.price_place_in_range.PricePlaceInRangeIndicator;
 import root.domain.indicator.trend.TrendLineIndicator;
 import root.domain.indicator.trend.TrendOscillatorIndicator;
 
@@ -114,12 +115,12 @@ public final class NumberIndicators
                 .build();
     }
 
-    public static NumberIndicator parabolicSAR(BarSeries series)
+    public static NumberIndicator parabolicSAR(BarSeries series, double aF, double maxA)
     {
         return NumberIndicator.builder()
                 .name("SAR")
                 .chartType(MAIN)
-                .indicator(new ParabolicSarIndicator(series))
+                .indicator(new ParabolicSarIndicator(series, series.numOf(aF), series.numOf(maxA)))
                 .build();
     }
 
@@ -149,6 +150,20 @@ public final class NumberIndicators
     public static NumberIndicator rsiLevel(int value, BarSeries series)
     {
         return level("RSI", value, series);
+    }
+
+    public static NumberIndicator ppr(int rangeLength, BarSeries series)
+    {
+        return NumberIndicator.builder()
+                .name(format(ONE_PARAMETER_NAME_FORMAT, "PPR", rangeLength))
+                .chartType(ADDITIONAL)
+                .indicator(new PricePlaceInRangeIndicator(rangeLength, series))
+                .build();
+    }
+
+    public static NumberIndicator pprLevel(int value, BarSeries series)
+    {
+        return level("PPR", value, series);
     }
 
     public static NumberIndicator macd(PriceIndicator priceIndicator, int shortLength, int longLength)
@@ -198,6 +213,38 @@ public final class NumberIndicators
     public static NumberIndicator adxLevel(int value, BarSeries series)
     {
         return level("ADX", value, series);
+    }
+
+    public static NumberIndicator atr(int length, BarSeries series)
+    {
+        return NumberIndicator.builder()
+                .name(format(ONE_PARAMETER_NAME_FORMAT, "ATR", length))
+                .chartType(ADDITIONAL)
+                .indicator(new ATRIndicator(series, length))
+                .build();
+    }
+
+    public static NumberIndicator atrEma(int atrLength, int emaLength, BarSeries series)
+    {
+        return NumberIndicator.builder()
+                .name(format(TWO_PARAMETERS_NAME_FORMAT, "ATR-EMA", atrLength, emaLength))
+                .chartType(ADDITIONAL)
+                .indicator(new EMAIndicator(new ATRIndicator(series, atrLength), emaLength))
+                .build();
+    }
+
+    public static NumberIndicator stochasticK(int length, BarSeries series)
+    {
+        return NumberIndicator.builder()
+                .name(format(ONE_PARAMETER_NAME_FORMAT, "Stoch %K", length))
+                .chartType(ADDITIONAL)
+                .indicator(new StochasticOscillatorKIndicator(series, length))
+                .build();
+    }
+
+    public static NumberIndicator stochasticLevel(int value, BarSeries series)
+    {
+        return level("Stoch", value, series);
     }
 
     public static NumberIndicator level(String namePrefix, int value, BarSeries series)

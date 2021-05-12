@@ -28,7 +28,7 @@ public class SAR_WR_Strategy1Factory extends AbstractStrategyFactory
     {
         super(strategyId, series);
         this.closePrice = new ClosePriceIndicator(series);
-        this.sar = parabolicSAR(series);
+        this.sar = parabolicSAR(series, 0.02, 0.2);
         this.wr = williamsR(10, series);
         this.wrLevelMinus10 = williamsRLevel(-10, series);
         this.wrLevelMinus90 = williamsRLevel(-90, series);

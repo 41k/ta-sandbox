@@ -40,7 +40,7 @@ function drawReport(report) {
     document.getElementById('n-trades').innerHTML = report.trades.length;
     document.getElementById('n-up-trades').innerHTML = report.nprofitableTrades;
     document.getElementById('n-down-trades').innerHTML = report.nunprofitableTrades;
-    document.getElementById('risk-reward-ratio').innerHTML = report.riskRewardRatio.toFixed(2);
+    document.getElementById('risk-reward-ratio').innerHTML = report.riskRewardRatio;
 }
 
 function drawTradesTable(trades) {

@@ -3,16 +3,13 @@ package root.domain.strategy.level;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.BaseStrategy;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
-import org.ta4j.core.indicators.helpers.DifferenceIndicator;
-import org.ta4j.core.indicators.helpers.HighestValueIndicator;
-import org.ta4j.core.indicators.helpers.LowestValueIndicator;
-import org.ta4j.core.trading.rules.CrossedUpIndicatorRule;
+import org.ta4j.core.indicators.helpers.*;
 import org.ta4j.core.trading.rules.OverIndicatorRule;
+import org.ta4j.core.trading.rules.UnderIndicatorRule;
 import root.domain.indicator.pivot_points.FibonacciRetracementLevelIndicator;
 import root.domain.level.MainChartLevelProvider;
-import root.domain.rule.UnderMainChartLevelRule;
 import root.domain.rule.OverMainChartLevelRule;
+import root.domain.rule.UnderMainChartLevelRule;
 import root.domain.strategy.AbstractStrategyFactory;
 
 import java.util.List;
@@ -27,6 +24,7 @@ public class FibonacciRetracementLevelsStrategyFactory extends AbstractStrategyF
     private final ClosePriceIndicator closePrice;
     private final DifferenceIndicator priceDifferenceIndicator;
 
+    // Warning: Do not use this FibonacciRetracementLevelIndicator with CrossedUpIndicatorRule/CrossedDownIndicatorRule
     private final FibonacciRetracementLevelIndicator fib_0;
     private final FibonacciRetracementLevelIndicator fib_0_382;
     private final FibonacciRetracementLevelIndicator fib_0_5;
@@ -66,7 +64,8 @@ public class FibonacciRetracementLevelsStrategyFactory extends AbstractStrategyF
     public Strategy create()
     {
         var entryRule = new OverIndicatorRule(priceDifferenceIndicator, PRICE_DIFFERENCE_THRESHOLD)
-                .and(new CrossedUpIndicatorRule(closePrice, fib_0_5));
+                .and(new UnderIndicatorRule(new PreviousValueIndicator(closePrice), new PreviousValueIndicator(fib_0_5)))
+                .and(new OverIndicatorRule(closePrice, fib_0_5));
         var exitRule = new OverMainChartLevelRule(closePrice, fib_0_Level)
                 .or(new UnderMainChartLevelRule(closePrice, fib_1_Level));
         return new BaseStrategy(strategyId, entryRule, exitRule);
