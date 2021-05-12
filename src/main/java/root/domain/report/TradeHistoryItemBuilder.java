@@ -18,8 +18,8 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class TradeHistoryItemBuilder
 {
-    private static final int DEFAULT_N_TICKS_BEFORE_TRADE = 100;
-    private static final int DEFAULT_N_TICKS_AFTER_TRADE = 20;
+    private static final int DEFAULT_N_TICKS_BEFORE_TRADE = 288;
+    private static final int DEFAULT_N_TICKS_AFTER_TRADE = 50;
 
     public TradeHistoryItem build(Trade trade, BarSeries series, StrategyFactory strategyFactory)
     {

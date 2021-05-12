@@ -3,7 +3,7 @@ function TickSeriesChartRenderer(priceChartType) {
     var priceChartType = priceChartType;
     var dateTimeFormat = 'yyyy-mm-dd HH:MM:ss';
     var timeFormat = 'HH:MM:ss';
-    var additionalChartIndicatorTypes = ['Shadow', 'ADX', 'RSI', 'MACD', 'OBV', 'WR', 'Trend Oscillator'];
+    var additionalChartIndicatorTypes = ['PPR', 'Stoch', 'ATR', 'Shadow', 'ADX', 'RSI', 'MACD', 'OBV', 'WR', 'Trend Oscillator'];
 
     this.renderTickSeries = function(tickSeries, seriesSegmentSize, wrapperId) {
         var tickSeriesSegments = formSeriesSegments(tickSeries, seriesSegmentSize);

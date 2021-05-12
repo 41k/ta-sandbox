@@ -7,11 +7,7 @@ import org.ta4j.core.cost.LinearTransactionCostModel;
 import org.ta4j.core.cost.ZeroCostModel;
 import root.domain.report.StrategyAnalysisReport;
 import root.domain.report.StrategyAnalysisReportBuilder;
-import root.domain.strategy.level.SL_TP_StrategyFactory;
 import root.domain.strategy.mess.*;
-import root.domain.strategy.ready.ETHUSD_5m_OnlyTP_DownTrend_Strategy1Factory;
-import root.domain.strategy.ready.ETHUSD_5m_OnlyTP_UpTrend_Strategy1Factory;
-import root.domain.strategy.ready.ETHUSD_5m_Pullback_Strategy1Factory;
 
 import static org.ta4j.core.Order.OrderType.BUY;
 
@@ -23,13 +19,18 @@ public class StrategyAnalysisService
     public StrategyAnalysisReport analyse()
     {
         var fromTimestamp = 1610196540000L;
-        var toTimestamp = 1618579108000L;
-        var symbol = "ETH_USD";
+        var toTimestamp = 1628588839000L;
+//        var symbol = "LTC_USD";
+//        var symbol = "XRP_USD";
+//        var symbol = "BTC_USD";
+            var symbol = "ETH_USD";
 //        var interval = "ONE_MINUTE";
-        var interval = "FIVE_MINUTES";
+//        var interval = "FIVE_MINUTES";
 //        var interval = "FIFTEEN_MINUTES";
 //        var interval = "THIRTY_MINUTES";
-//        var interval = "ONE_HOUR";
+//         var interval = "ONE_HOUR";
+//        var interval = "FOUR_HOURS";
+        var interval = "ONE_DAY";
         var series = new BaseBarSeries(barProvider.getBars(symbol, interval, fromTimestamp, toTimestamp));
 //        var strategyFactory = new MacdStrategy1Factory("MACD", series);
 //        var strategyFactory = new SAR_WR_Strategy1Factory("SAR-WR", series);
@@ -42,13 +43,13 @@ public class StrategyAnalysisService
 //        var strategyFactory = new ETHUSD_5m_OnlyTP_DownTrend_Strategy1Factory("Only TP in DownTrend", series);
 //        var strategyFactory = new SL_TP_StrategyFactory("SL&TP", series);
 //        var strategyFactory = new MasterCandleStrategyFactory("Master candle", series);
-//        var strategyFactory = new NewStrategy1Factory("Trend Following", series);
-        var strategyFactory = new NewStrategy5Factory("New", series);
+        var strategyFactory = new NewStrategy4Factory("New", series);
         var strategy = strategyFactory.create();
-        var seriesManager = new BarSeriesManager(series);
-        var tradingRecord = seriesManager.run(strategy);
-//        var seriesManager = new BarSeriesManager(series, new LinearTransactionCostModel(0.002), new ZeroCostModel());
+//        var seriesManager = new BarSeriesManager(series);
+//        var tradingRecord = seriesManager.run(strategy);
+        var seriesManager = new BarSeriesManager(series, new LinearTransactionCostModel(0.002), new ZeroCostModel());
 //        var tradingRecord = seriesManager.run(strategy, BUY, series.numOf(0.08d));
+        var tradingRecord = seriesManager.run(strategy, BUY, series.numOf(1d));
         var trades = tradingRecord.getTrades();
         var strategyReportBuilder = new StrategyAnalysisReportBuilder();
         return strategyReportBuilder.build(trades, series, strategyFactory);
